@@ -25,7 +25,7 @@ ifeq ($(IPHONE_TARGET), HARDWARE)
   CROSS-COMPILE=1
   IPHONE_PLATFORM:=$(XCODE)/Contents/Developer/Platforms/iPhoneOS.platform/Developer
   IPHONE_SDK:=$(IPHONE_PLATFORM)/SDKs/iPhoneOS${IPHONE_VERSION}.sdk
-  IPHONE_HARDWARE_ARCHITECTURE=armv7
+  IPHONE_HARDWARE_ARCHITECTURE=arm64
 ifeq ($(iphone_codesign),1)
   CODESIGN_ALLOCATE:=$(IPHONE_PLATFORM)/usr/bin/codesign_allocate
   POSTLINK=; codesign -f -s "iPhone Developer" $(BIN)
