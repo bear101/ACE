@@ -24,11 +24,7 @@ ifeq ($(IPHONE_TARGET), HARDWARE)
   CROSS-COMPILE=1
   IPHONE_PLATFORM:=$(XCODE)/Contents/Developer/Platforms/iPhoneOS.platform/Developer
   IPHONE_SDK:=$(IPHONE_PLATFORM)/SDKs/iPhoneOS${IPHONE_VERSION}.sdk
-<<<<<<< HEAD
   IPHONE_HARDWARE_ARCHITECTURE=arm64
-=======
-  IPHONE_HARDWARE_ARCHITECTURE=armv7
->>>>>>> master
 
   CFLAGS  += -miphoneos-version-min=7.0
   CCFLAGS += -miphoneos-version-min=7.0
