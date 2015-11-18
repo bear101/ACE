@@ -24,7 +24,11 @@ ifeq ($(IPHONE_TARGET), HARDWARE)
   CROSS-COMPILE=1
   IPHONE_PLATFORM:=$(XCODE)/Contents/Developer/Platforms/iPhoneOS.platform/Developer
   IPHONE_SDK:=$(IPHONE_PLATFORM)/SDKs/iPhoneOS${IPHONE_VERSION}.sdk
+<<<<<<< HEAD
   IPHONE_HARDWARE_ARCHITECTURE=arm64
+=======
+  IPHONE_HARDWARE_ARCHITECTURE=armv7
+>>>>>>> master
 
   CFLAGS  += -miphoneos-version-min=7.0
   CCFLAGS += -miphoneos-version-min=7.0
@@ -43,8 +47,13 @@ AR:=/usr/bin/ar
 RANLIB:=/usr/bin/ranlib
 DLD = $(CXX)
 LD  = $(CXX)
+<<<<<<< HEAD
 CFLAGS  += -arch $(IPHONE_HARDWARE_ARCHITECTURE) -isysroot $(IPHONE_SDK) -DENABLE_BITCODE
 CCFLAGS += -arch $(IPHONE_HARDWARE_ARCHITECTURE) -isysroot $(IPHONE_SDK) -DENABLE_BITCODE
+=======
+CFLAGS  += -arch $(IPHONE_HARDWARE_ARCHITECTURE) -isysroot $(IPHONE_SDK) -fembed-bitcode
+CCFLAGS += -arch $(IPHONE_HARDWARE_ARCHITECTURE) -isysroot $(IPHONE_SDK) -fembed-bitcode
+>>>>>>> master
 
 ifneq (,$(HOST_ROOT))
   TAO_IDLFLAGS += -g $(HOST_ROOT)/bin/ace_gperf
