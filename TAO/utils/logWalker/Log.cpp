@@ -13,6 +13,7 @@ Log::Log (Session &session)
     dump_target_ (0),
     history_ (),
     timestamp_ (),
+    time_ (0,0),
     line_ (0),
     info_ (0),
     offset_ (0),
@@ -103,7 +104,6 @@ Log::get_preamble ()
         }
     }
 
-
   long pid = ACE_OS::strtol(p + 1, &t, 10);
   if (pid == 0)
     return;
@@ -134,8 +134,9 @@ Log::get_preamble ()
   if (this->hostproc_ == 0)
     {
       size_t numprocs = this->procs_.size();
-      this->hostproc_ = new HostProcess (this->origin_,pid);
+      this->hostproc_ = new HostProcess (this->origin_, pid);
       this->procs_.insert_tail(this->hostproc_);
+      this->hostproc_->start_time (this->time_);
       ACE_CString &procname = this->alias_.length() > 0 ?
         this->alias_ : this->origin_;
       switch (numprocs)
@@ -163,6 +164,7 @@ Log::get_preamble ()
       this->session_.add_process (this->hostproc_);
     }
   this->thr_ = this->hostproc_->find_thread (tid, this->offset_);
+  this->thr_->add_time (this->timestamp_);
   return;
 }
 
@@ -269,6 +271,7 @@ Log::parse_dump_giop_msg_i (void)
                       this->offset_, rid));
           return;
         }
+      target->time (this->time_);
       break;
     }
     case 0: // sending request
@@ -286,12 +289,19 @@ Log::parse_dump_giop_msg_i (void)
         }
       inv->init (this->line_, this->offset_, this->thr_);
       target = inv->octets(mode == 0);
-      if (target == 0 && mode == 3)
+      if (target == 0)
         {
-          ACE_ERROR ((LM_ERROR,
-                      "%d: could not map invocation to target for req_id %d\n",
-                      this->offset_, rid));
-          return;
+          if (mode == 3)
+            {
+              ACE_ERROR ((LM_ERROR,
+                          "%d: could not map invocation to target for req_id %d\n",
+                          this->offset_, rid));
+              return;
+            }
+        }
+      else
+        {
+          target->time (this->time_);
         }
 //       if (mode == 3)
 //         this->thr_->exit_wait(pp, this->offset_);
@@ -299,6 +309,7 @@ Log::parse_dump_giop_msg_i (void)
     }
     case 2: { // sending reply
       target = new GIOP_Buffer(this->line_, this->offset_, this->thr_);
+      target->time (this->time_);
       this->thr_->pop_invocation ();
       break;
     }
@@ -419,8 +430,8 @@ Log::parse_process_parsed_msgs_i (void)
                   "%d: Error parsing %C, can't find peer "
                   "for handle %d, text = %s\n",
                   this->offset_, this->origin_.c_str(), handle, this->info_));
-      pp = new PeerProcess (this->offset_, true);
-      Transport *t = new Transport ("<unknown>", false, this->offset_);
+      pp = new PeerProcess (this->offset_, this->timestamp_, true);
+      Transport *t = new Transport ("<unknown>", false, this->offset_, this->timestamp_);
       t->handle_ = handle;
       pp->add_transport(t);
       this->hostproc_->add_peer (handle,pp);
@@ -452,6 +463,23 @@ void
 Log::parse_wait_on_read_i (void)
 {
   PeerProcess *pp = this->thr_->incoming();
+  this->thr_->exit_wait (pp, this->offset_);
+}
+
+void
+Log::parse_make_idle_i (void)
+{
+  char *hpos = ACE_OS::strchr(this->info_,'[');
+  long handle = ACE_OS::strtol(hpos+1,0,10);
+  PeerProcess *pp = this->hostproc_->find_peer(handle);
+  if (pp == 0)
+    {
+      ACE_ERROR ((LM_ERROR,
+                  "%d: make idle, error parsing %C, can't find peer "
+                  "for handle %d, text = %s\n",
+                  this->offset_, this->origin_.c_str(), handle, this->info_));
+      return;
+    }
   this->thr_->exit_wait (pp, this->offset_);
 }
 
@@ -567,7 +595,9 @@ Log::parse_close_connection_i (void)
     {
       Transport *t = pp->find_transport (handle);
       if (t != 0)
-        t->close_offset_ = this->offset_;
+        {
+          t->close (this->offset_, this->timestamp_);
+        }
     }
 
   this->hostproc_->remove_peer(handle);
@@ -584,7 +614,7 @@ Log::parse_handler_open_i (bool is_ssl)
   if (*c == '[')
     c++;
   long handle = ACE_OS::strtol(c,0,10);
-  PeerProcess *pp = 0;
+  PeerProcess *pp = this->thr_->peek_new_connection();
   if (this->conn_waiters_.size() > 0)
     {
       // ACE_DEBUG ((LM_DEBUG,"%d: handler_open: conn_waiters_.size() = %d, addr = %s\n",
@@ -597,13 +627,27 @@ Log::parse_handler_open_i (bool is_ssl)
           c_iter.next(waiter);
           if (waiter != 0 && waiter->match_server_addr (addr))
             {
+              if (pp != 0 && waiter != pp)
+                {
+                  // ACE_DEBUG ((LM_DEBUG,"%d: handler_open: found waiter other than for tid %d\n",
+                  //             this->offset_, thr_->id ()));
+                  continue;
+                }
+              // ACE_DEBUG ((LM_DEBUG,"%d: handler_open: found waiter addr = %s:%s\n",
+              //           this->offset_,
+              //           (waiter == 0 ? "<null>" :  waiter->server_addr().host_.c_str()),
+              //           (waiter == 0 ? "<null>" :  waiter->server_addr().port_.c_str())
+              //           ));
               pp = waiter;
               c_iter.remove();
               break;
             }
           // else
-          //   ACE_DEBUG ((LM_DEBUG,"%d: handler_open: no match waiter addr = %s\n",
-          //               this->offset_, (waiter == 0 ? "<null>" :  waiter->server_addr().c_str()) ));
+            // ACE_DEBUG ((LM_DEBUG,"%d: handler_open: no match waiter addr = %s:%s\n",
+            //             this->offset_,
+            //             (waiter == 0 ? "<null>" :  waiter->server_addr().host_.c_str()),
+            //             (waiter == 0 ? "<null>" :  waiter->server_addr().port_.c_str())
+            //             ));
         }
     }
 
@@ -625,9 +669,12 @@ Log::parse_handler_open_i (bool is_ssl)
   const ACE_CString &local_addr = this->thr_->pending_local_addr();
   if (local_addr.length() > 0 )
     {
+      // ACE_DEBUG ((LM_DEBUG,"%d: handler_open: local addr = %s, pp is server = %d\n",
+      //             this->offset_, local_addr.c_str(), pp->is_server() ));
+
       if (pp->is_server())
         {
-          Transport *t = new Transport (local_addr.c_str(), true, this->offset_);
+          Transport *t = new Transport (local_addr.c_str(), true, this->offset_, this->timestamp_);
           pp->add_transport (t);
           this->hostproc_->add_client_endpoint (t->client_endpoint_);
         }
@@ -637,6 +684,10 @@ Log::parse_handler_open_i (bool is_ssl)
         }
       this->thr_->pending_local_addr ("");
     }
+  // else
+  //   ACE_DEBUG ((LM_DEBUG,"%d: handler_open: tid %d, local addr = empty\n",
+  //               this->offset_, this->thr_->id () ));
+
 
   Transport *trans = 0;
   if (pp->is_server())
@@ -650,11 +701,11 @@ Log::parse_handler_open_i (bool is_ssl)
                       this->offset_, this->origin_.c_str()));
           return;
         }
-      //      trans->client_endpoint_ = addr;
+
     }
   else
     {
-      trans = new Transport (addr, false, this->offset_);
+      trans = new Transport (addr, false, this->offset_, this->timestamp_);
       pp->add_transport(trans);
     }
   trans->handle_ = handle;
@@ -670,12 +721,13 @@ Log::parse_begin_connection_i (void)
   PeerProcess *pp = this->hostproc_->find_peer(addr);
   if (pp == 0)
     {
-      pp = new PeerProcess(this->offset_, true);
+      pp = new PeerProcess(this->offset_, this->timestamp_, true);
       pp->set_server_addr (addr);
     }
   this->conn_waiters_.insert_tail (pp);
   this->thr_->push_new_connection (pp);
-  // ACE_DEBUG ((LM_DEBUG,"%d: begin_connection: pushing pp for addr %s\n", offset_,addr));
+  // ACE_DEBUG ((LM_DEBUG,"%d: begin_connection: tid %d pushing pp for addr %s\n",
+  //             offset_,thr_->id (), addr));
 }
 
 void
@@ -697,13 +749,17 @@ Log::parse_local_addr_i (void)
   PeerProcess *peer = this->thr_->peek_new_connection();
   if (peer == 0)
     {
+      // ACE_DEBUG ((LM_DEBUG, "%d: local_addr: thr %d, pending = %s\n",
+      //             offset_, thr_->id(), addr));
       this->thr_->pending_local_addr (addr);
       return;
     }
 
   if (peer->is_server())
     {
-      Transport *t = new Transport (addr, true, this->offset_);
+      // ACE_DEBUG ((LM_DEBUG, "%d: local_addr: thr %d, peer is server addr = %s\n",
+      //             offset_, thr_->id(), addr));
+      Transport *t = new Transport (addr, true, this->offset_, this->timestamp_);
       peer->add_transport (t);
       this->hostproc_->add_client_endpoint (t->client_endpoint_);
     }
@@ -723,7 +779,7 @@ Log::parse_connection_not_complete_i (void)
       //             offset_, pp->offset()));
     }
   else
-    ACE_DEBUG ((LM_DEBUG,"%d: connection_not_complete: no pending peer\n", offset_));
+    ACE_ERROR ((LM_ERROR,"%d: connection_not_complete: no pending peer\n", offset_));
 }
 
 void
@@ -731,7 +787,7 @@ Log::parse_open_as_server_i (void)
 {
   // ACE_DEBUG ((LM_DEBUG,"%d: open_as_server: adding peer process\n", offset_));
 
-  this->thr_->push_new_connection (new PeerProcess(this->offset_, false));
+  this->thr_->push_new_connection (new PeerProcess(this->offset_, this->timestamp_, false));
 }
 
 void
@@ -770,7 +826,10 @@ Log::parse_wait_for_connection_i (void)
       long handle = ACE_OS::strtol (pos, 0, 10);
       PeerProcess *pp = 0;
 
-      ACE_DEBUG ((LM_DEBUG, "%d: wait_for_connection: wait done, result = %d, purging handle = %d\n", this->offset_, result, handle));
+      // ACE_DEBUG ((LM_DEBUG,
+      //             "%d: wait_for_connection: wait done, result = %d, "
+      //             "purging handle = %d\n",
+      //             this->offset_, result, handle));
 
       if (this->conn_waiters_.size() > 0)
         {
@@ -922,17 +981,31 @@ Log::get_timestamp (void)
 {
   const char *time_tok = ACE_OS::strchr (this->line_,'@');
   size_t len = (size_t)(time_tok - this->line_);
-  if (time_tok != 0 && len < 30)
+
+  if (time_tok != 0 && len < 28 )
     {
+      if (this->line_[4] != '-' ||
+          this->line_[7] != '-' ||
+          this->line_[10] != ' ')
+        {
+          return;
+        }
+      ACE_CString prev_st = this->timestamp_;
       this->timestamp_ = ACE_CString (this->line_, len);
-#if 0
-      int year, mon, day;
-      int hr, min, sec, msec;
-      ::sscanf (hms+1,"%d-%d-%d %d:%d:%d.%d", &year, &mon, &day, &hr, &min, &sec, &msec);
-      time = (hr * 3600 + min *60 + sec) * 1000 + msec;
-      if (this->time_ > time)
-        time += 24 * 3600 * 1000;
-#endif
+
+      struct tm tms;
+      int msec;
+      ::sscanf (this->timestamp_.c_str(),"%d-%d-%d %d:%d:%d.%d",
+        &tms.tm_year, &tms.tm_mon, &tms.tm_mday,
+        &tms.tm_hour, &tms.tm_min, &tms.tm_sec, &msec);
+      tms.tm_year -= 1900;
+      tms.tm_mon -= 1;
+      tms.tm_isdst = 0;
+      tms.tm_wday = 0;
+      tms.tm_yday = 0;
+
+      this->time_ = ::mktime (&tms);
+      this->time_.usec (msec * 1000);
     }
 }
 
@@ -945,8 +1018,8 @@ Log::parse_line (void)
       return;
     }
 
-  this->get_preamble();
   this->get_timestamp();
+  this->get_preamble();
 
   if (ACE_OS::strstr (this->info_, "Handler::open, IIOP connection to peer") != 0)
     {
@@ -983,6 +1056,10 @@ Log::parse_line (void)
   else if (ACE_OS::strstr (this->info_, "Wait_On_Read") != 0)
     {
       this->parse_wait_on_read_i();
+    }
+  else if (ACE_OS::strstr (this->info_, "::make_idle") != 0)
+    {
+      this->parse_make_idle_i();
     }
   else if (ACE_OS::strstr (this->info_, "::cleanup_queue, byte_count") != 0)
     {

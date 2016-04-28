@@ -235,9 +235,14 @@
 
 #define ACE_HAS_DIRENT
 #define ACE_HAS_MSG
+#define ACE_HAS_NONCONST_INET_NTOP
 #define ACE_HAS_RECURSIVE_MUTEXES
 #define ACE_HAS_SOCKADDR_MSG_NAME
 #define ACE_HAS_THREAD_SAFE_ACCEPT
+
+/* MS is phasing out the GetVersion API so let's prepare */
+/* For now all releases still provide it. */
+#define ACE_HAS_WIN32_GETVERSION
 
 /* LACKS dir-related facilities */
 #define ACE_LACKS_READDIR_R
@@ -275,6 +280,10 @@
 #define ACE_LACKS_GETIPNODEBYNAME_IPV6
 #define ACE_LACKS_KILL
 #define ACE_LACKS_INET_ATON
+#if _WIN32_WINNT < 0x0600
+# define ACE_LACKS_INET_NTOP
+# define ACE_LACKS_INET_PTON
+#endif
 #define ACE_LACKS_MADVISE
 #define ACE_LACKS_MKFIFO
 #define ACE_LACKS_MODE_MASKS

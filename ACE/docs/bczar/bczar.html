@@ -30,12 +30,6 @@
         timeouts etc. Make sure that no new test failures show up. This <a href="mailto:jwillemsen@remedy.nl">
           guy</a>
       knows most of the information. Ask him to help you out with known problems.
-      <li>
-        Keep an eye on the <a href="http://atcdstats.theaceorb.nl/index.shtml">footprint and
-          performance</a> stats. Any abnormal changes should be brought to the
-        attention of the developer responsible for it or to the <a href="mailto:devo-group@list.isis.vanderbilt.edu">
-          devo group</a>.
-      <li>
       Keep the builds ticking. Any red on the "Last Finished" column in the
       Scoreboard should be fixed. The link to the "Build Name" indicates the machine
       where the build is being run.
@@ -118,7 +112,7 @@
           </ul>
           If you want to perform a full build with qt support, than run:
           <ul>
-            <li><code>yum install ntp rubygem-rmagick bison libxerces-c-devel psmisc yum-utils gdb unzip glibc-devel libasan bison redhat-lsb perl-Pod-Usage rubygems clang make patch libcgroup-devel ant setuptool system-config-network-tui system-config-firewall-tui lcov gnuplot java-1.7.0-openjdk git-svn perl svn screen pysvn automake doxygen bzip2 tar gzip openssh graphviz zip libtool gcc-c++ boost-devel valgrind openssl-devel gcc qt4 fltk-devel bzip2-devel rsync openssl lzo-devel zziplib-devel acpid acpi nfs-utils java xerces-c xerces-c-devel mc qt qt-devel icecream ruby ruby-devel lksctp-tools-devel git telnet GitPython NetworkManager wget mailx</code></li>
+            <li><code>yum install deltarpm ntp rubygem-rmagick bison xerces-c-devel psmisc yum-utils gdb unzip glibc-devel libasan bison redhat-lsb perl-Pod-Usage rubygems clang make patch libcgroup-devel ant setuptool system-config-network-tui system-config-firewall-tui lcov gnuplot java-1.8.0-openjdk git-svn perl svn screen pysvn automake doxygen bzip2 tar gzip openssh graphviz zip libtool gcc-c++ boost-devel valgrind openssl-devel gcc qt4 fltk-devel bzip2-devel rsync openssl lzo-devel zziplib-devel acpid acpi nfs-utils java xerces-c xerces-c-devel mc qt qt-devel icecream ruby ruby-devel lksctp-tools-devel git telnet GitPython NetworkManager wget mailx</code></li>
           </ul>
           For some optional i686 packages run
           <ul>
@@ -141,9 +135,9 @@
             Checkout like this:
             <ul>
               <li>
-                <code>git clone https://github.com/DOCGroup/ATCD.git ATCD</code></li>
+                <code>git clone https://github.com/DOCGroup/ACE_TAO.git ACE_TAO</code></li>
               <li>
-                <code>git clone https://github.com/DOCGroup/ATCD.git MPC</code></li>
+                <code>git clone https://github.com/DOCGroup/ACE_TAO.git MPC</code></li>
             </ul>
         </ul>
         <li>
@@ -210,8 +204,8 @@
     ACE+TAO+CIAO-X_Y_Z (where X is the ACE Major version number, and Y & Z are the
     Minor and Beta release numbers of the release that is to be restarted).<p>
       E.g.:<br>
-      <code>cd ATCD && git tag -d ACE+TAO+CIAO-X_Y_Z<br />
-        cd MPC && git tag -d ACE+TAO+CIAO-X_Y_Z<br />
+      <code>cd ACE_TAO && git tag -d ACE+TAO-X_Y_Z<br />
+        cd MPC && git tag -d ACE+TAO-X_Y_Z<br />
       </code>
       <br>
       Note that this <em>only</em> needs to be done if the <em>tagging</em> fails. If
@@ -241,9 +235,9 @@
         export DOC_ROOT=$PWD<br>
         export SIGNATURE="Johnny Willemsen"<br>
         export MAILID=jwillemsen@remedy.nl<br>
-        git clone https://github.com/DOCGroup/ATCD.git ATCD<br>
+        git clone https://github.com/DOCGroup/ACE_TAO.git ACE_TAO<br>
         git clone https://github.com/DOCGroup/MPC.git MPC<br>
-        cd ATCD<br>
+        cd ACE_TAO<br>
         ACE/bin/make_release.py --beta --update --verbose<br>
         ACE/bin/make_release.py --beta --tag --verbose<br>
         ACE/bin/make_release.py --beta --push --verbose<br>
@@ -288,10 +282,10 @@
             version number being released e.g. 5_6_7)
             <br>
             <code>svn co
-              git clone https://github.com/DOCGroup/ATCD.git --depth 1 --branch ACE+TAO+CIAO-6_3_1 ATCD<br>
+              git clone https://github.com/DOCGroup/ACE_TAO.git --depth 1 --branch ACE+TAO-6_3_3 ACE_TAO<br>
           </li>
-          <li>Change to the ATCD directory using <br>
-          cd ATCD</li>
+          <li>Change to the ACE_TAO directory using <br>
+          cd ACE_TAO</li>
           <li>
             Set the needed environment variables using<br>
             <code>export ACE_ROOT=$PWD/ACE</code><br>
@@ -319,17 +313,17 @@
         rm -rf doxygen<br>
         mkdir doxygen<br>
         cd doxygen<br>
-        git clone https://github.com/DOCGroup/ATCD.git --depth 1 --branch ACE+TAO+CIAO-6_3_1 ATCD<br>
-        cd ATCD<br>
+        git clone https://github.com/DOCGroup/ACE_TAO.git --depth 1 --branch ACE+TAO-6_3_3 ACE_TAO<br>
+        cd ACE_TAO<br>
         export ACE_ROOT=$PWD/ACE<br>
         export TAO_ROOT=$PWD/TAO<br>
-        export CIAO_ROOT=$PWD/CIAO<br>
-        export DANCE_ROOT=$PWD/DAnCE<br>
+        export CIAO_ROOT=<br>
+        export DANCE_ROOT=<br>
         export DDS_ROOT=<br>
         cd ACE<br>
         $ACE_ROOT/bin/generate_rel_manpages<br>
-        scp ACE-html.tar.gz ACE-html.tar.bz2 ACE-html.zip ACE-html.tar.gz.md5 ACE-html.tar.bz2.md5 ACE-html.zip.md5 bczar@download.dre.vanderbilt.edu:/export/www/download.dre/ACE+TAO-distribution<br>
- </code>
+        scp ACE-html.tar.gz ACE-html.tar.bz2 ACE-html.zip ACE-html.tar.gz.md5 ACE-html.tar.bz2.md5 ACE-html.zip.md5 bczar@download.dre.vanderbilt.edu:/export/www/download.dre/ACE+TAO-distribution
+     </code>
 <br>
       <li>
         While doxygen churns, format a release announcement, including the release
@@ -431,7 +425,7 @@
         correct version number.</li>
       <li>
         Update in the autobuild archive the file configs/scoreboard/releases.xml with
-        the made release (version number and release date). This is used by the integrated scoreboard on http://scoreboard.theaceorb.nl  Remember to do a changelog entry.</li>
+        the made release (version number and release date). This is used by the integrated scoreboard on http://scoreboard.remedy.nl  Remember to do a changelog entry.</li>
       <li>
         Update the ACE_wrappers repo (remember to create a changelog entry, and possibly archive the old changelog to the changelog directory if this has become too long):<ul>
         <li>docs/Download.html to show the new release. Make sure you refer to the

@@ -234,9 +234,6 @@
 /* Compiler requires extern "C" functions for signals. */
 #define ACE_HAS_SIG_C_FUNC 1
 
-/* Define to 1 if platform has snprintf(). */
-#define ACE_HAS_SNPRINTF 1
-
 /* Define to 1 if `sin6_len' is a member of `sockaddr_in6'. */
 #define ACE_HAS_SOCKADDR_IN6_SIN6_LEN 1
 
@@ -543,7 +540,7 @@
 #define LT_OBJDIR ".libs/"
 
 /* Define to the address where bug reports for this package should be sent. */
-#define PACKAGE_BUGREPORT "ace-bugs@cs.wustl.edu"
+#define PACKAGE_BUGREPORT "ace-bugs@list.isis.vanderbilt.edu"
 
 /* Define to the full name of this package. */
 #define PACKAGE_NAME "ACE"

@@ -1,3 +1,28 @@
+USER VISIBLE CHANGES BETWEEN ACE-6.3.3 and ACE-6.3.4
+====================================================
+
+. ACE_SSL_Context::set_mode() can no longer be used to select a specific
+  SSL/TLS protocol version, use ACE_SSL_Context::filter_versions() for that.
+  This follows general advice by the OpenSSL project to go through
+  SSL_CTX_set_options() to limit the list of protocols available. The purpose
+  of ACE_SSL_Context::set_mode() is now limited to explicitly restricting
+  behaviour to client or server (defaults to both).
+
+USER VISIBLE CHANGES BETWEEN ACE-6.3.2 and ACE-6.3.3
+====================================================
+
+. Visual Studio 2015 has adequate C++11 support, because of this
+  ACE_HAS_CPP11 is now defined with this compiler. A large amount
+  of warnings given by this new compiler have been fixed
+
+. As part of the release script we generate vc12 and vc14
+  solution files which are packaged as part of the release
+
+. Ended daily maintenance for OpenVMS
+
+. Fixed a defect in ACE_INET_Addr when there is a non-empty interface
+  address list and set_port_number() is called.
+
 USER VISIBLE CHANGES BETWEEN ACE-6.3.1 and ACE-6.3.2
 ====================================================
 
@@ -131,7 +156,7 @@ USER VISIBLE CHANGES BETWEEN ACE-6.2.4 and ACE-6.2.5
 USER VISIBLE CHANGES BETWEEN ACE-6.2.3 and ACE-6.2.4
 ====================================================
 
-. Added support for FC20 and ended support for FC19
+. Added support for FC20 and ended maintenance for FC19
 
 . Extended C++11 feature test suite
 

@@ -115,6 +115,7 @@
 # define ACE_LACKS_SIGINFO_H
 # define ACE_HAS_UCONTEXT_T
 # define ACE_HAS_SIGTIMEDWAIT
+# define ACE_HAS_STRERROR_R
 
 #else  /* ! __GLIBC__ */
     // Fixes a problem with some non-glibc versions of Linux...
@@ -402,6 +403,7 @@
 #define ACE_HAS_RECURSIVE_THR_EXIT_SEMANTICS
 #define ACE_HAS_2_PARAM_ASCTIME_R_AND_CTIME_R
 #define ACE_HAS_REENTRANT_FUNCTIONS
+#define ACE_HAS_MNTENT
 
 // To support UCLIBC
 #if defined (__UCLIBC__)

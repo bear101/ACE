@@ -53,6 +53,7 @@
 #define ACE_LACKS_GETLOADAVG
 #define ACE_LACKS_ISCTYPE
 #define ACE_LACKS_LOG2
+#define ACE_LACKS_LOCALECONV
 #define ACE_LACKS_NETDB_REENTRANT_FUNCTIONS
 #define ACE_LACKS_PWD_FUNCTIONS
 #define ACE_LACKS_PTHREAD_CANCEL
@@ -63,6 +64,7 @@
 #define ACE_LACKS_SWAB
 #define ACE_LACKS_SYSV_SHMEM
 #define ACE_LACKS_TELLDIR
+#define ACE_LACKS_WCHAR_STD_NAMESPACE
 #define ACE_LACKS_WCSTOLL
 #define ACE_LACKS_WCSTOULL
 
@@ -346,6 +348,7 @@
 # define ACE_LACKS_CONDATTR 1
 #elif __ANDROID_API__ == 9
 #elif __ANDROID_API__ == 14
+#elif __ANDROID_API__ == 21
 #else
 # error Unsupported Android release
 #endif
