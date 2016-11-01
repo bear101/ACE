@@ -1,3 +1,30 @@
+USER VISIBLE CHANGES BETWEEN ACE-6.4.1 and ACE-6.4.2
+====================================================
+
+USER VISIBLE CHANGES BETWEEN ACE-6.4.0 and ACE-6.4.1
+====================================================
+
+. The ACE_DEBUG environment variable can again be used to set the
+  internal debug flag.  This used to work but was mistakenly changed
+  in an earlier release.
+
+. Corrected usage of ACE_Singleton and template instantation to be
+  valid C++ (GCC cross-compiler arm-linux-gnueabihf-g++ requires it).
+
+. Added support for detecting the Mac OS X version when configured with
+  ace/config-macosx.h and include/makeinclude/platform_macosx.GNU.
+  Also on 10.11 El Capitan, use rpath to avoid a problem with SIP.
+
+. Added support for Android NDK r12b (Platform API 24) and improved
+  cross compilation support
+
+USER VISIBLE CHANGES BETWEEN ACE-6.3.4 and ACE-6.4.0
+====================================================
+
+. Added support for obtaining the micro version number
+
+. Reduced include of ace/Auto_Ptr.h in header files
+
 USER VISIBLE CHANGES BETWEEN ACE-6.3.3 and ACE-6.3.4
 ====================================================
 
@@ -8,6 +35,22 @@ USER VISIBLE CHANGES BETWEEN ACE-6.3.3 and ACE-6.3.4
   of ACE_SSL_Context::set_mode() is now limited to explicitly restricting
   behaviour to client or server (defaults to both).
 
+. Improve Oracle Studio support
+
+. CIAO and DAnCE are forked to their own github repositories
+  and are not part anymore of the ACE+TAO release packages
+
+. Fixed several Coverity reported issues
+
+. Added ACE configuration for FACE safety profiles (see config-face-safety.h).
+  FACE, or Future Airborne Capability Environment http://www.opengroup.org/face,
+  specifies a restricted subset of OS functions and rules for controlling
+  dynamic memory allocation.  When built in this configuration on a platform
+  that supports it, ACE conforms to the FACE requirements.
+
+. ACE uses new netdb.h functions (getaddrinfo/getnameinfo) if they are
+  available, in place of deprecated functions (gethostbyname/addr).
+
 USER VISIBLE CHANGES BETWEEN ACE-6.3.2 and ACE-6.3.3
 ====================================================
 
@@ -17,6 +60,9 @@ USER VISIBLE CHANGES BETWEEN ACE-6.3.2 and ACE-6.3.3
 
 . As part of the release script we generate vc12 and vc14
   solution files which are packaged as part of the release
+
+. Added support for VxWorks 7 (kernel mode and RTP).
+  See the comments in include/makeinclude/platform_vxworks7.0.GNU for details.
 
 . Ended daily maintenance for OpenVMS
 

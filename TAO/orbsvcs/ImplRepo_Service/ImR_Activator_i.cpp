@@ -418,7 +418,7 @@ bool
 ImR_Activator_i::still_running_i (const char *name, pid_t &pid)
 {
   bool is_running =  this->running_server_list_.find (name) == 0;
-  
+
   if (is_running)
     {
       pid = ACE_INVALID_PID;
