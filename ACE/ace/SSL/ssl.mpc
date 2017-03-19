@@ -1,5 +1,5 @@
 //  -*- MPC -*-
-project(SSL) : acelib, ace_output, install, ace_openssl {
+project(SSL) : acelib, bdr_output, install, ace_openssl {
   avoids      += ace_for_tao
   requires    += ssl
   sharedname   = ACE_SSL
