@@ -1,9 +1,9 @@
 //  -*- MPC -*- now wouldn't this be cool...
-project(ACE) : ace_output, acedefaults, install, other, codecs, token, svcconf, uuid, filecache, versioned_namespace, pkgconfig, support_ostream {
+project(ACE) : bdr_output, acedefaults, install, other, codecs, token, svcconf, uuid, filecache, versioned_namespace, pkgconfig, support_ostream {
   avoids       = ace_for_tao
   sharedname   = ACE
   dynamicflags += ACE_BUILD_DLL
-
+  
   Source_Files(ACE_COMPONENTS) {
     ACE.cpp
     ACE_crc_ccitt.cpp
