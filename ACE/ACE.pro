@@ -8,7 +8,9 @@ HEADERS += $$system("find $${PWD}/protocols/ace/INet -name '*.h' -or -name '*.in
 SOURCES += $$system("find $${PWD}/ace -name '*.cpp'")
 SOURCES += $$system("find $${PWD}/protocols/ace/INet -name '*.cpp'")
 
-INCLUDEPATH += $${PWD}/ace
-INCLUDEPATH += $${HEST}/protocols/ace/INet
+INCLUDEPATH += $${PWD}/
+INCLUDEPATH += $${PWD}/protocols
+
+DEFINES += ACE_INET_Export=""
 
 TARGET=ACE
