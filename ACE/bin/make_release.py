@@ -319,7 +319,7 @@ def update_debianbuild ():
     prev_tao_ver = None
 
     # rename files
-    mask = re.compile ("(libace|libkokyu|libtao)(.*)(\d+\.\d+\.\d+)(.*)")
+    mask = re.compile ("(libace|libkokyu|libnetsvcs)(.*)(\d+\.\d+\.\d+)(.*)")
     tao = re.compile ("tao", re.IGNORECASE)
 
     for fname in glob.iglob(doc_root + '/ACE_TAO/ACE/debian/*'):
@@ -378,14 +378,14 @@ def update_debianbuild ():
 
     # rewrite debian/dsc
     dsc_lines = """Format: 1.0
-Source: ACE+TAO-src-%s
+Source: ACE+src-%s
 Version: %s
 Binary: ace
 Maintainer: Johnny Willemsen  <jwillemsen@remedy.nl>
 Architecture: any
-Build-Depends: gcc, make, g++, debhelper (>= 5), dpkg-dev, libssl-dev (>= 0.9.7d), dpatch (>= 2.0.10), libxt-dev (>= 4.3.0), libfltk1.1-dev (>= 1.1.4), libqt4-dev (>= 4.4~rc1-4), tk-dev, zlib1g-dev, docbook-to-man, bzip2, autoconf, automake, libtool, autotools-dev, doxygen, graphviz, libfox-1.6-dev, libzzip-dev, libbz2-dev
+Build-Depends: gcc, make, g++, debhelper (>= 5), dpkg-dev, libssl-dev (>= 0.9.7d), dpatch (>= 2.0.10), libxt-dev (>= 4.3.0), libfltk1.1-dev (>= 1.1.4), libqt4-dev (>= 4.4~rc1-4), tk-dev, docbook-to-man, autoconf, automake, libtool, autotools-dev, doxygen, graphviz, libfox-1.6-dev
 Files:
- 65b34001c9605f056713a7e146b052d1 46346654 ACE+TAO-src-%s.tar.gz
+ 65b34001c9605f056713a7e146b052d1 46346654 ACE-src-%s.tar.gz
 
 """ % (comp_versions["ACE_version"], comp_versions["TAO_version"], comp_versions["ACE_version"])
     if opts.take_action:
@@ -837,7 +837,7 @@ def package (stage_dir, package_dir, decorator):
         pass # swallow any errors
 
     text_files, bin_files = create_file_lists (join (stage_dir, "ACE_wrappers"),
-                                               "ACE_wrappers", ["TAO", ".gitignore"])
+                                               "ACE_wrappers", ["TAO", ".gitignore", ".git"])
 
 #    write_file_lists ("fACE" + decorator, text_files, bin_files)
     update_packages ("\n".join (text_files),
@@ -852,7 +852,7 @@ def package (stage_dir, package_dir, decorator):
 
     # for TAO:
     text_files, bin_files = create_file_lists (join (stage_dir, "ACE_wrappers/TAO"),
-                                                     "ACE_wrappers/TAO", [".gitignore"])
+                                                     "ACE_wrappers/TAO", [".gitignore", ".git"])
 
 #    write_file_lists ("fTAO" + decorator, text_files, bin_files)
     update_packages ("\n".join (text_files),
@@ -888,6 +888,7 @@ def generate_workspaces (stage_dir):
     msvc_exclude_option = ' '
     vc12_option = ' -name_modifier *_vc12 '
     vc14_option = ' -name_modifier *_vc14 '
+    vs2017_option = ' -name_modifier *_vs2017 '
 
     redirect_option = str ()
     if not opts.verbose:
@@ -902,6 +903,8 @@ def generate_workspaces (stage_dir):
     print "\tGenerating VC14 solutions..."
     ex (mpc_command + " -type vc14 "  + msvc_exclude_option + mpc_option + workers_option + vc14_option + redirect_option)
 
+    print "\tGenerating VS2017 solutions..."
+    ex (mpc_command + " -type vs2017 "  + msvc_exclude_option + mpc_option + workers_option + vs2017_option + redirect_option)
 
     print "\tCorrecting permissions for all generated files..."
     ex ("find ./ -name '*.vc[p,w]' -or -name '*.bmak' -or -name '*.vcproj' -or -name '*.sln' -or -name '*.vcxproj' -or -name '*.filters' -or -name 'GNUmake*' | xargs chmod 0644")
