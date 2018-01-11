@@ -5,11 +5,12 @@
 shared_libs=0
 static_libs_only=1
 ssl=1
+c++11=1
 
 CPPFLAGS += -DOPENSSL_NO_SSL2=1
 
-SSL_ROOT=/Users/bdr/libraries/android/armeabi-v7a/openssl
-INSTALL_PREFIX=/Users/bdr/libraries/android/armeabi-v7a/ACE
+SSL_ROOT=$(TTLIBS_ROOT)/openssl
+INSTALL_PREFIX=$(TTLIBS_ROOT)/ACE
 
 include $(ACE_ROOT)/include/makeinclude/platform_android.GNU
 
