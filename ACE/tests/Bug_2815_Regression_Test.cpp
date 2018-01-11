@@ -202,7 +202,12 @@ run_main (int, ACE_TCHAR *[])
               ACE_TEXT ("Thus, the test is disabled in this case\n")));
 
 #else
-  int max_notifications = 512 * 1024;
+
+# ifdef ACE_LYNXOS_MAJOR
+  const int max_notifications = 512;
+# else
+  const int max_notifications = 512 * 1024;
+# endif
 
   {
     ACE_Reactor select_reactor (
@@ -373,8 +378,8 @@ Driver::notify_handlers(
     if(reactor()->notify (handlers[i]) == -1)
       {
         ACE_ERROR((LM_ERROR,
-                   ACE_TEXT ("Cannot send notifications in %C test (%d/%d)\n"),
-                   test_name_, i, notifications_curr_));
+                   ACE_TEXT ("notify %d/%d in %C %p\n"),
+                   i, notifications_curr_, test_name_, ACE_TEXT ("test")));
         return;
       }
     handlers[i]->notification_queued();

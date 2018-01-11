@@ -20,11 +20,11 @@ ImR_Locator_Shutdown::ImR_Locator_Shutdown (ImR_Locator_i &imr)
 }
 
 void
-ImR_Locator_Shutdown::operator () (int /*which_signal*/)
+ImR_Locator_Shutdown::operator () (int /*sig*/)
 {
   try
     {
-      this->imr_.shutdown (false);
+      this->imr_.signal_shutdown ();
     }
   catch (const CORBA::Exception& ex)
     {
@@ -139,7 +139,7 @@ run_service_command (Options& opts)
         }
       else
         {
-          ORBSVCS_ERROR ((LM_ERROR, "Error: Failed to install service. error:%d\n", errno));
+          ORBSVCS_ERROR ((LM_ERROR, "Error: Failed to install service. errno %d, error <%p>\n", errno, "install"));
         }
       if (ret == 0)
         return 1;
@@ -190,4 +190,3 @@ ACE_TMAIN(int argc, ACE_TCHAR *argv[])
 
   return run_standalone (opts);
 }
-

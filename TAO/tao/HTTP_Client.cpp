@@ -4,11 +4,13 @@
 
 #include "tao/HTTP_Handler.h"
 #include "ace/OS_NS_string.h"
+#include "ace/Truncate.h"
 #include "tao/debug.h"
 
 TAO_BEGIN_VERSIONED_NAMESPACE_DECL
 
 TAO_HTTP_Client::TAO_HTTP_Client (void)
+  : filename_ (0)
 {
 }
 
@@ -40,7 +42,7 @@ TAO_HTTP_Client::read (ACE_Message_Block *mb)
       TAOLIB_ERROR_RETURN ((LM_ERROR, "TAO (%P|%t) - HTTP_Client::read, Connector error\n"), -1);
     }
 
-  return HTTP_reader.byte_count ();
+  return ACE_Utils::truncate_cast<int> (HTTP_reader.byte_count ());
 
 }
 
