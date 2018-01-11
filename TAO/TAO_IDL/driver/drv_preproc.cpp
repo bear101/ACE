@@ -78,6 +78,7 @@ trademarks or registered trademarks of Sun Microsystems, Inc.
 #include "ace/UUID.h"
 #include "ace/Dirent.h"
 #include "ace/OS_NS_sys_stat.h"
+#include "ace/Truncate.h"
 
 // FUZZ: disable check_for_streams_include
 #include "ace/streams.h"
@@ -137,8 +138,23 @@ DRV_cpp_putarg (const char *str)
       throw Bailout ();
     }
 
-  DRV_arglist[DRV_argcount++] =
-    ACE::strnew (ACE_TEXT_CHAR_TO_TCHAR (str));
+  if (str && ACE_OS::strchr (str, ' '))
+    {
+      ACE_TCHAR *buf = 0;
+      ACE_NEW_NORETURN (buf, ACE_TCHAR[ACE_OS::strlen (str) + 3]);
+      if (buf)
+        {
+          buf[0] = ACE_TEXT ('"');
+          ACE_OS::strcpy (buf + 1, ACE_TEXT_CHAR_TO_TCHAR (str));
+          ACE_OS::strcat (buf, ACE_TEXT ("\""));
+          DRV_arglist[DRV_argcount++] = buf;
+        }
+    }
+  else
+    {
+      DRV_arglist[DRV_argcount++] =
+        ACE::strnew (ACE_TEXT_CHAR_TO_TCHAR (str));
+    }
 }
 
 // Expand the output argument with the given filename.
@@ -171,7 +187,7 @@ DRV_cpp_calc_total_argsize(void)
   unsigned long ix = 0;
   while (DRV_arglist[ix] != 0)
     {
-      size += ACE_OS::strlen (DRV_arglist[ix]) + 1;
+      size += ACE_Utils::truncate_cast<unsigned long> (ACE_OS::strlen (DRV_arglist[ix]) + 1);
       ++ix;
     }
   return size;
@@ -182,7 +198,7 @@ static bool
 DRV_get_line (FILE *file)
 {
   char *line = ACE_OS::fgets (drv_line,
-                              drv_line_size,
+                              ACE_Utils::truncate_cast<int> (drv_line_size),
                               file);
   if (!line || (!*line && feof (file)))
     {
@@ -226,7 +242,7 @@ DRV_get_line (FILE *file)
         }
 
       line = ACE_OS::fgets (drv_line + len,
-                            drv_line_size - len,
+                            ACE_Utils::truncate_cast<int> (drv_line_size - len),
                             file);
     } while (line && *line);
 
@@ -256,7 +272,7 @@ DRV_cpp_init (void)
                    "-D__TAO_IDL=0x%2.2d%2.2d%2.2d",
                    ACE_MAJOR_VERSION,
                    ACE_MINOR_VERSION,
-                   ACE_BETA_VERSION);
+                   ACE_MICRO_VERSION);
 
   DRV_cpp_putarg (version_option);
   DRV_cpp_putarg ("-I.");
@@ -632,79 +648,6 @@ DRV_cpp_post_init (void)
                             "/ccm",
                             true);
     }
-  else if (TAO_ROOT != 0)
-    {
-      // If CIAO_ROOT hasn't been set,
-      // maybe it's nested under TAO_ROOT.
-      DRV_add_include_path (include_path4,
-                            TAO_ROOT,
-                            "/CIAO",
-                            true);
-
-      DRV_add_include_path (include_path5,
-                            TAO_ROOT,
-                            "/CIAO/ciao",
-                            true);
-
-      DRV_add_include_path (include_path5,
-                            TAO_ROOT,
-                            "/CIAO/ccm",
-                            true);
-    }
-  else
-    {
-      // If TAO_ROOT hasn't been set, try ACE_ROOT.
-      char* ACE_ROOT = ACE_OS::getenv ("ACE_ROOT");
-
-      if (ACE_ROOT != 0)
-        {
-          DRV_add_include_path (include_path4,
-                                ACE_ROOT,
-                                "/TAO/CIAO",
-                                true);
-
-          DRV_add_include_path (include_path5,
-                                ACE_ROOT,
-                                "/TAO/CIAO/ciao",
-                                true);
-
-          DRV_add_include_path (include_path5,
-                                ACE_ROOT,
-                                "/TAO/CIAO/ccm",
-                                true);
-        }
-      else
-        {
-#if defined (TAO_IDL_INCLUDE_DIR)
-          DRV_add_include_path (include_path4,
-                                TAO_IDL_INCLUDE_DIR,
-                                0,
-                                true);
-
-          DRV_add_include_path (include_path5,
-                                TAO_IDL_INCLUDE_DIR,
-                                "/ciao",
-                                true);
-
-          DRV_add_include_path (include_path5,
-                                TAO_IDL_INCLUDE_DIR,
-                                "/ccm",
-                                true);
-#else
-          // If ACE_ROOT isn't defined either, there will already
-          // be a warning from DRV_preproc().
-          DRV_add_include_path (include_path4,
-                                ACE_ROOT,
-                                ".",
-                                true);
-
-          DRV_add_include_path (include_path5,
-                                ACE_ROOT,
-                                ".",
-                                true);
-#endif  /* TAO_IDL_INCLUDE_DIR */
-        }
-    }
 
   // Save path of current directory, in case
   // the call to DRV_sweep_dirs()
@@ -919,7 +862,7 @@ namespace
         ACE_CString fixed_name ("tao/");
         fixed_name += incl_file;
 
-        idl_global->add_to_included_idl_files (fixed_name.rep ());
+        idl_global->add_to_included_idl_files (fixed_name.c_str ());
       }
     else
       {
