@@ -18,6 +18,7 @@
 #include "ace/Log_Msg.h"
 #include "ace/OS_NS_arpa_inet.h"
 #include "ace/SString.h"
+#include "ace/OS_NS_unistd.h"
 
 // Make sure that ACE_Addr::addr_type_ is the same
 // as the family of the inet_addr_.
@@ -84,6 +85,30 @@ static bool test_tao_use (void)
   return true;
 }
 
+static bool test_port_assignment (void)
+{
+#if defined (ACE_HAS_IPV6)
+  ACE_INET_Addr addr1 (static_cast<unsigned short> (0), ACE_IPV6_ANY, AF_INET6);
+  ACE_INET_Addr addr2;
+
+  addr1.set_port_number (12345);
+  addr2.set (addr1);
+  if (addr1.get_port_number () != addr2.get_port_number ())
+    {
+      ACE_ERROR ((LM_ERROR,
+                  ACE_TEXT ("port number not properly copied. ")
+                  ACE_TEXT ("addr1 port = %d addr2 port = %d\n"),
+                  addr1.get_port_number (), addr2.get_port_number ()));
+      return false;
+    }
+   ACE_DEBUG ((LM_DEBUG,
+              ACE_TEXT ("Test Port Assignment passed\n")));
+#else
+   ACE_DEBUG ((LM_DEBUG,
+              ACE_TEXT ("Test Port Assignment is IPv6 only\n")));
+#endif /* ACE_HAS_IPV6 */
+  return true;
+}
 
 static bool test_multiple (void)
 {
@@ -208,6 +233,47 @@ int run_main (int, ACE_TCHAR *[])
           if (addr_port != check)
             {
               ACE_ERROR ((LM_ERROR, ACE_TEXT ("Reset on iter %d failed\n"), i));
+
+              if (addr_port.get_type() != check.get_type()) {
+                ACE_ERROR ((LM_ERROR, ACE_TEXT ("  addr_port.get_type()= %d, check.get_type()=%d\n")
+                  , addr_port.get_type(), check.get_type()));
+              }
+              if (addr_port.get_size() != check.get_size()) {
+                ACE_ERROR ((LM_ERROR, ACE_TEXT ("  addr_port.get_size()= %d, check.get_size()=%d\n")
+                  , addr_port.get_size(), check.get_size()));
+              }
+#if defined(ACE_HAS_IPV6)
+              if (addr_port.get_type() == check.get_type() && addr_port.get_size() == check.get_size()){
+                if (addr_port.get_type() == AF_INET6) {
+                  const struct sockaddr_in6 *addr_port_in6 =
+                    static_cast<const struct sockaddr_in6*> (addr_port.get_addr());
+                  const struct sockaddr_in6 *check_in6 =
+                    static_cast<const struct sockaddr_in6*> (check.get_addr());
+# if defined(AIX)
+
+                  ACE_ERROR((LM_ERROR, ACE_TEXT ("  addr_port_in6->sin6_len=%d, check_in6->sin6_len=%d\n")
+                    , (int)addr_port_in6->sin6_len, (int)check_in6->sin6_len));
+# endif
+
+                  ACE_ERROR((LM_ERROR, ACE_TEXT ("  addr_port_in6->sin6_family=%d, check_in6->sin6_family=%d\n")
+                    , (int)addr_port_in6->sin6_family, (int)check_in6->sin6_family));
+
+                  ACE_ERROR((LM_ERROR, ACE_TEXT ("  addr_port_in6->sin6_port=%d, check_in6->sin6_port=%d\n")
+                    , (int)addr_port_in6->sin6_port, (int)check_in6->sin6_port));
+
+                  ACE_ERROR((LM_ERROR, ACE_TEXT ("  addr_port_in6->sin6_flowinfo=%d, check_in6->sin6_flowinfo=%d\n")
+                    , (int)addr_port_in6->sin6_flowinfo, (int)check_in6->sin6_flowinfo));
+
+                  ACE_ERROR((LM_ERROR, ACE_TEXT ("  addr_port_in6->sin6_scope_id=%d, check_in6->sin6_scope_id=%d\n")
+                    , (int)addr_port_in6->sin6_scope_id, (int)check_in6->sin6_scope_id));
+
+                  ACE_ERROR((LM_DEBUG, ACE_TEXT ("  addr_port_in6->sin6_addr=")));
+                  ACE_HEX_DUMP((LM_DEBUG, reinterpret_cast<const char*>(&addr_port_in6->sin6_addr), sizeof(addr_port_in6->sin6_addr)));
+                  ACE_ERROR((LM_DEBUG, ACE_TEXT ("  check_in6->sin6_addr=")));
+                  ACE_HEX_DUMP((LM_DEBUG, reinterpret_cast<const char*>(&check_in6->sin6_addr), sizeof(check_in6->sin6_addr)));
+                }
+              }
+#endif
               status = 1;
             }
         }
@@ -363,6 +429,29 @@ int run_main (int, ACE_TCHAR *[])
 #if defined (ACE_HAS_IPV6)
   if (ACE::ipv6_enabled ())
     {
+      char local_host_name[1024];
+      ACE_OS::hostname(local_host_name, 1024);
+      const char* local_names[] = {"localhost", local_host_name};
+
+      for (int i = 0; i < 2; ++i)
+      {
+         ACE_INET_Addr addr;
+         int old_type = addr.get_type();
+         if (addr.set(12345, local_names[i]) == 0) {
+           if (addr.get_type() != old_type) {
+             ACE_ERROR ((LM_ERROR,
+                         ACE_TEXT ("IPv6 set failed: addr.set(12345, \"%C\"), old addr.type() = %d, new addr_type()= %d\n"),
+                         local_names[i],
+                         old_type,
+                         addr.get_type ()));
+             status = 1;
+           }
+         }
+         else {
+           ACE_DEBUG ((LM_DEBUG, ACE_TEXT ("IPv6 set failed: addr.set(12345, \"%C\") returns nonzero\n"), local_names[i]));
+         }
+      }
+
       const char *ipv6_addresses[] = {
         "1080::8:800:200c:417a", // unicast address
         "ff01::101",             // multicast address
@@ -464,6 +553,9 @@ int run_main (int, ACE_TCHAR *[])
     status = 1;
 
   if (!test_multiple ())
+    status = 1;
+
+  if (!test_port_assignment ())
     status = 1;
 
   ACE_INET_Addr a1 (80, "127.0.0.1");

@@ -567,7 +567,7 @@ protected:
   TAO_AV_FlowSpecSet forward_flow_spec_set;
   TAO_AV_FlowSpecSet reverse_flow_spec_set;
   AVStreams::StreamEndPoint_var peer_sep_;
-  AVStreams::SFPStatus *sfp_status_;
+  const AVStreams::SFPStatus *sfp_status_;
   AVStreams::StreamCtrl_var streamctrl_;
 };
 
@@ -1019,6 +1019,12 @@ protected:
   CosPropertyService::Properties dev_params_;
   TAO_AV_FlowSpecSet flow_spec_set_;
   CORBA::String_var reverse_channel_;
+
+#if defined (ACE_WIN32_VC14)
+  // Workaround for connect issue 1577211
+  ACE_UNIMPLEMENTED_FUNC (TAO_FlowEndPoint (const TAO_FlowEndPoint &))
+  ACE_UNIMPLEMENTED_FUNC (TAO_FlowEndPoint &operator= (const TAO_FlowEndPoint &))
+#endif
 };
 
 class TAO_AV_Export TAO_FlowProducer:

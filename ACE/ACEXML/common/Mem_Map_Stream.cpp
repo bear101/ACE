@@ -1,13 +1,15 @@
 #include "ace/FILE_Addr.h"
 #include "ace/OS_NS_unistd.h"
+#include "ace/Truncate.h"
+
 #include "ACEXML/common/Mem_Map_Stream.h"
 
-
-
 ACEXML_Mem_Map_Stream::ACEXML_Mem_Map_Stream (void)
-  : svc_handler_ (0)
+  : svc_handler_ (0),
+    recv_pos_ (0),
+    get_pos_ (0),
+    end_of_mapping_plus1_ (0)
 {
-
 }
 
 ACE_SOCK_Stream &

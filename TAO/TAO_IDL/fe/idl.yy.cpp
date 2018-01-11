@@ -379,7 +379,7 @@ static void yy_fatal_error (yyconst char msg[]  );
  */
 #define YY_DO_BEFORE_ACTION \
         (yytext_ptr) = yy_bp; \
-        tao_yyleng = (size_t) (yy_cp - yy_bp); \
+        tao_yyleng = (int) (yy_cp - yy_bp); \
         (yy_hold_char) = *yy_cp; \
         *yy_cp = '\0'; \
         if ( tao_yyleng >= YYLMAX ) \
@@ -1179,7 +1179,7 @@ static int input (void );
                         buf[n++] = (char) c; \
                 if ( c == EOF && ferror( tao_yyin ) ) \
                         YY_FATAL_ERROR( "input in flex scanner failed" ); \
-                result = n; \
+                result = static_cast<int> (n); \
                 } \
         else \
                 { \
@@ -1252,9 +1252,9 @@ extern int tao_yylex (void);
  */
 YY_DECL
 {
-        register yy_state_type yy_current_state;
-        register char *yy_cp, *yy_bp;
-        register int yy_act;
+        yy_state_type yy_current_state;
+        char *yy_cp, *yy_bp;
+        int yy_act;
 
 #line 122 "fe/idl.ll"
 
@@ -1304,7 +1304,7 @@ YY_DECL
 yy_match:
                 do
                         {
-                        register YY_CHAR yy_c = yy_ec[YY_SC_TO_UI(*yy_cp)];
+                        YY_CHAR yy_c = yy_ec[YY_SC_TO_UI(*yy_cp)];
                         if ( yy_accept[yy_current_state] )
                                 {
                                 (yy_last_accepting_state) = yy_current_state;
@@ -2201,9 +2201,9 @@ case YY_STATE_EOF(INITIAL):
  */
 static int yy_get_next_buffer (void)
 {
-            register char *dest = YY_CURRENT_BUFFER_LVALUE->yy_ch_buf;
-        register char *source = (yytext_ptr);
-        register int number_to_move, i;
+        char *dest = YY_CURRENT_BUFFER_LVALUE->yy_ch_buf;
+        char *source = (yytext_ptr);
+        int number_to_move, i;
         int ret_val;
 
         if ( (yy_c_buf_p) > &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[(yy_n_chars) + 1] )
@@ -2245,8 +2245,8 @@ static int yy_get_next_buffer (void)
 
         else
                 {
-                        int num_to_read =
-                        YY_CURRENT_BUFFER_LVALUE->yy_buf_size - number_to_move - 1;
+                        int num_to_read = (int)
+                        (YY_CURRENT_BUFFER_LVALUE->yy_buf_size - number_to_move - 1);
 
                 while ( num_to_read <= 0 )
                         { /* Not enough room in the buffer - grow it. */
@@ -2259,7 +2259,7 @@ static int yy_get_next_buffer (void)
 
                         if ( b->yy_is_our_buffer )
                                 {
-                                int new_size = b->yy_buf_size * 2;
+                                int new_size = (int)(b->yy_buf_size * 2);
 
                                 if ( new_size <= 0 )
                                         b->yy_buf_size += b->yy_buf_size / 8;
@@ -2280,8 +2280,8 @@ static int yy_get_next_buffer (void)
 
                         (yy_c_buf_p) = &b->yy_ch_buf[yy_c_buf_p_offset];
 
-                        num_to_read = YY_CURRENT_BUFFER_LVALUE->yy_buf_size -
-                                                number_to_move - 1;
+                        num_to_read = (int)(YY_CURRENT_BUFFER_LVALUE->yy_buf_size -
+                                                number_to_move - 1);
 
                         }
 
@@ -2335,15 +2335,15 @@ static int yy_get_next_buffer (void)
 
     static yy_state_type yy_get_previous_state (void)
 {
-        register yy_state_type yy_current_state;
-        register char *yy_cp;
+        yy_state_type yy_current_state;
+        char *yy_cp;
 
         yy_current_state = (yy_start);
         yy_current_state += YY_AT_BOL();
 
         for ( yy_cp = (yytext_ptr) + YY_MORE_ADJ; yy_cp < (yy_c_buf_p); ++yy_cp )
                 {
-                register YY_CHAR yy_c = (*yy_cp ? yy_ec[YY_SC_TO_UI(*yy_cp)] : 1);
+                YY_CHAR yy_c = (*yy_cp ? yy_ec[YY_SC_TO_UI(*yy_cp)] : 1);
                 if ( yy_accept[yy_current_state] )
                         {
                         (yy_last_accepting_state) = yy_current_state;
@@ -2368,10 +2368,10 @@ static int yy_get_next_buffer (void)
  */
     static yy_state_type yy_try_NUL_trans  (yy_state_type yy_current_state )
 {
-        register int yy_is_jam;
-            register char *yy_cp = (yy_c_buf_p);
+        int yy_is_jam;
+        char *yy_cp = (yy_c_buf_p);
 
-        register YY_CHAR yy_c = 1;
+        YY_CHAR yy_c = 1;
         if ( yy_accept[yy_current_state] )
                 {
                 (yy_last_accepting_state) = yy_current_state;
@@ -2389,9 +2389,9 @@ static int yy_get_next_buffer (void)
         return yy_is_jam ? 0 : yy_current_state;
 }
 
-    static void yyunput (int c, register char * yy_bp )
+    static void yyunput (int c, char * yy_bp )
 {
-        register char *yy_cp;
+    char *yy_cp;
 
     yy_cp = (yy_c_buf_p);
 
@@ -2401,10 +2401,10 @@ static int yy_get_next_buffer (void)
         if ( yy_cp < YY_CURRENT_BUFFER_LVALUE->yy_ch_buf + 2 )
                 { /* need to shift things up to make room */
                 /* +2 for EOB chars. */
-                register int number_to_move = (yy_n_chars) + 2;
-                register char *dest = &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[
+                int number_to_move = (yy_n_chars) + 2;
+                char *dest = &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[
                                         YY_CURRENT_BUFFER_LVALUE->yy_buf_size + 2];
-                register char *source =
+                char *source =
                                 &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[number_to_move];
 
                 while ( source > YY_CURRENT_BUFFER_LVALUE->yy_ch_buf )
@@ -2413,7 +2413,7 @@ static int yy_get_next_buffer (void)
                 yy_cp += (int) (dest - source);
                 yy_bp += (int) (dest - source);
                 YY_CURRENT_BUFFER_LVALUE->yy_n_chars =
-                        (yy_n_chars) = YY_CURRENT_BUFFER_LVALUE->yy_buf_size;
+                        (yy_n_chars) = static_cast<int> (YY_CURRENT_BUFFER_LVALUE->yy_buf_size);
 
                 if ( yy_cp < YY_CURRENT_BUFFER_LVALUE->yy_ch_buf + 2 )
                         YY_FATAL_ERROR( "flex scanner push-back overflow" );
@@ -2450,7 +2450,7 @@ static int yy_get_next_buffer (void)
 
                 else
                         { /* need more input */
-                        int offset = (yy_c_buf_p) - (yytext_ptr);
+                        int offset = static_cast<int> ((yy_c_buf_p) - (yytext_ptr));
                         ++(yy_c_buf_p);
 
                         switch ( yy_get_next_buffer(  ) )
@@ -2751,7 +2751,7 @@ static void tao_yyensure_buffer_stack (void)
                 /* Increase the buffer to prepare for a possible push. */
                 int grow_size = 8 /* arbitrary grow size */;
 
-                num_to_alloc = (yy_buffer_stack_max) + grow_size;
+                num_to_alloc = static_cast<int> (yy_buffer_stack_max) + grow_size;
                 (yy_buffer_stack) = (struct yy_buffer_state**)tao_yyrealloc
                                                                 ((yy_buffer_stack),
                                                                 num_to_alloc * sizeof(struct yy_buffer_state*)
@@ -2789,7 +2789,7 @@ YY_BUFFER_STATE tao_yy_scan_buffer  (char * base, yy_size_t  size )
         b->yy_buf_pos = b->yy_ch_buf = base;
         b->yy_is_our_buffer = 0;
         b->yy_input_file = 0;
-        b->yy_n_chars = b->yy_buf_size;
+        b->yy_n_chars = static_cast<int> (b->yy_buf_size);
         b->yy_is_interactive = 0;
         b->yy_at_bol = 1;
         b->yy_fill_buffer = 0;
@@ -2811,7 +2811,7 @@ YY_BUFFER_STATE tao_yy_scan_buffer  (char * base, yy_size_t  size )
 YY_BUFFER_STATE tao_yy_scan_string (yyconst char * yystr )
 {
 
-        return tao_yy_scan_bytes(yystr,strlen(yystr) );
+        return tao_yy_scan_bytes(yystr, static_cast<int> (strlen(yystr)) );
 }
 
 /** Setup the input buffer state to scan the given bytes. The next call to tao_yylex() will
@@ -3015,7 +3015,7 @@ int tao_yylex_destroy  (void)
 #ifndef yytext_ptr
 static void yy_flex_strncpy (char* s1, yyconst char * s2, int n )
 {
-        register int i;
+        int i;
         for ( i = 0; i < n; ++i )
                 s1[i] = s2[i];
 }
@@ -3024,7 +3024,7 @@ static void yy_flex_strncpy (char* s1, yyconst char * s2, int n )
 #ifdef YY_NEED_STRLEN
 static int yy_flex_strlen (yyconst char * s )
 {
-        register int n;
+        int n;
         for ( n = 0; s[n]; ++n )
                 ;
 
@@ -3915,7 +3915,7 @@ idl_get_pragma_string (char *pragma)
       return 0;
     }
 
-  int len = end - start;
+  int len = static_cast<int> (end - start);
   char *retval = 0;
 
   ACE_NEW_RETURN (retval,
