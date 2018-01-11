@@ -974,7 +974,7 @@ TAO_ORB_Core::init (int &argc, char *argv[] )
           // addr.  All endpoint strings should be of the above
           // form(s).
           //
-          // Multiple sets of endpoint may be seperated by a semi-colon `;'.
+          // Multiple sets of endpoint may be separated by a semi-colon `;'.
           // For example:
           //
           //   corbaloc:space:2001,1.2@odyssey:2010;uiop://foo,bar
@@ -2744,7 +2744,7 @@ TAO_ORB_Core::resolve_iormanipulation_i (void)
 void
 TAO_ORB_Core::resolve_ior_table_i (void)
 {
-  TAO_Adapter_Factory *factory = 0;
+  TAO_Adapter_Factory *factory =
   ACE_Dynamic_Service<TAO_Adapter_Factory>::instance
     (this->configuration (), ACE_TEXT("TAO_IORTable"));
   if (factory == 0)
@@ -2778,7 +2778,7 @@ TAO_ORB_Core::resolve_ior_table_i (void)
 void
 TAO_ORB_Core::resolve_async_ior_table_i (void)
 {
-  TAO_Adapter_Factory *factory = 0;
+  TAO_Adapter_Factory *factory =
   ACE_Dynamic_Service<TAO_Adapter_Factory>::instance
     (this->configuration (), ACE_TEXT("TAO_Async_IORTable"));
   if (factory == 0)
@@ -3258,7 +3258,7 @@ TAO_ORB_Core::connection_timeout_hook (Timeout_Hook hook)
   // calls this function as part of pre_init processing, and this call
   // happes for every ORB instance. This was the case before these The
   // latter call occurs when the messaging library is loaded. The
-  // redundant calls occured then as well. Second, it isn't clear how
+  // redundant calls occurred then as well. Second, it isn't clear how
   // a lock in this static method would react in the face of windows
   // dlls, shared memory segments, etc. Therefore we are continuing to
   // keep this code lockless as it always was, assuming no

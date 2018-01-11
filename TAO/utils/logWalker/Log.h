@@ -61,6 +61,7 @@ protected:
   void parse_process_parsed_msgs_i (void);
   void parse_wait_for_event_i (void);
   void parse_wait_on_read_i (void);
+  void parse_make_idle_i (void);
   void parse_cleanup_queue_i (void);
   void parse_complete_connection_i (void);
   void parse_close_connection_i (void);
@@ -86,6 +87,7 @@ protected:
 
   // parsed for every line
   ACE_CString timestamp_;
+  ACE_Time_Value time_;
   char *line_;
   char *info_;
   size_t offset_;
