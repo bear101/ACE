@@ -21,7 +21,6 @@ typedef ACE_Strong_Bound_Ptr<Locator_Repository, ACE_Null_Mutex> Repository_Ptr;
 *
 * @brief Class for managing changes to ServerInfo memory to ensure
 * it is persisted
-*
 */
 class UpdateableServerInfo
 {
@@ -64,10 +63,7 @@ public:
 
   /// retrieve smart pointer to non-const Server_Info
   /// and indicate repo update required
-  const Server_Info_Ptr& edit(void);
-
-  /// force indication of update needed
-  void needs_update(void);
+  const Server_Info_Ptr& edit(bool active = true);
 
   /// indicate it Server_Info_Ptr is null
   bool null(void) const;
