@@ -147,15 +147,14 @@ ANDROID_ARCH ?= arm
 #SYSROOT ?= $(NDK)/platforms/android-9/arch-$(ANDROID_ARCH)
 
 ifeq (,$(CROSS_COMPILE))
-  CROSS_COMPILE=unknown-android-arch-
   ifeq ($(ANDROID_ARCH),arm)
     CROSS_COMPILE=arm-linux-androideabi-
-  endif
-  ifeq ($(ANDROID_ARCH),x86)
-    CROSS_COMPILE=i686-linux-android-
-  endif
-  ifeq ($(ANDROID_ARCH),arm64)
-    CROSS_COMPILE=aarch64-linux-android-
+  else
+    ifeq ($(ANDROID_ARCH),x86)
+      CROSS_COMPILE=i686-linux-android-
+    else
+      CROSS_COMPILE=unknown-android-arch-
+    endif
   endif
 endif
 
@@ -183,13 +182,6 @@ ifeq (arm,$(findstring arm,$(ANDROID_ARCH)))
     FLAGS_C_CC += -march=armv7-a -mfloat-abi=softfp -mfpu=neon
     LDFLAGS    += -march=armv7-a -Wl,--fix-cortex-a8
   endif
-
-  # Is this correct??
-  # ifeq ($(ANDROID_ABI),arm64-v8a)
-  #   FLAGS_C_CC += -march=arm64-v8a -mfloat-abi=softfp -mfpu=neon
-  #   LDFLAGS    += -march=arm64-v8a
-  # endif
-
 
 endif
 

@@ -1,16 +1,20 @@
-# create toolchain from Android NDK
-# $ make-standalone-toolchain.sh --toolchain=aarch64-linux-android-4.9 --platform=android-21 --install-dir=toolchain-aarch64-linux-android-4.9 --arch=arm64
+# Create toolchain from Android NDK
+#
+# unzip android-ndk-r17-darwin-x86_64.zip into LIBS
+#
+# $ build/tools/make_standalone_toolchain.py --arch arm64 --api 21 --stl gnustl --install-dir $LIBS/toolchain-aarch64-linux-android
+#
 
-# $ cd toolchain-aarch64-linux-android-4.9
-# $ export TOOLCHAIN=$PWD
-# $ export PATH=$TOOLCHAIN/bin:$PATH
-# $ export SYSROOT=$TOOLCHAIN/sysroot
+# $ export NDK=$LIBS/android-ndk-r17
+# $ export ANDROID_ABI=arm64-v8a
 # $ export ANDROID_ARCH=arm64
-# $ export NDK=??
+# $ export ARCH=$ANDROID_ARCH
+# $ export PATH=$LIBS/toolchain-aarch64-linux-android:$PATH
 
 shared_libs=0
 static_libs_only=1
 ssl=1
+c++11=1
 
 SSL_ROOT=$(TTLIBS_ROOT)/openssl
 INSTALL_PREFIX=$(TTLIBS_ROOT)/ACE
