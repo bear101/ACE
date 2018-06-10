@@ -9,7 +9,7 @@
 # $ export ANDROID_ABI=arm64-v8a
 # $ export ANDROID_ARCH=arm64
 # $ export ARCH=$ANDROID_ARCH
-# $ export PATH=$LIBS/toolchain-aarch64-linux-android:$PATH
+# $ export PATH=$LIBS/toolchain-aarch64-linux-android/bin:$PATH
 
 shared_libs=0
 static_libs_only=1
