@@ -2,7 +2,8 @@
 #
 # unzip android-ndk-r17-darwin-x86_64.zip into LIBS
 #
-# $ build/tools/make_standalone_toolchain.py --arch arm64 --api 21 --stl gnustl --install-dir $LIBS/toolchain-aarch64-linux-android
+# $ build/tools/make_standalone_toolchain.py --arch arm64 --api 24 --stl gnustl --install-dir $LIBS/toolchain-aarch64-linux-android
+# Android API < 24 doesn't have stderr and inaddr6_any defined
 #
 
 # $ export NDK=$LIBS/android-ndk-r17
