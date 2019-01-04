@@ -133,6 +133,13 @@ namespace ACE
                 ::SSL * ssl_ptr = new_connection->peer ().ssl ();
                 ::SSL_set_SSL_CTX (ssl_ptr, this->context_->ssl_context ().context ());
               }
+
+            // Added by bdr
+            {
+                ::SSL * ssl_ptr = new_connection->peer().ssl();
+                int x = ::SSL_set_tlsext_host_name(ssl_ptr, this->host_.c_str());
+                x = x;
+            }
 #endif
             ACE_HANDLE proxy_conn_handle = proxy_connection.peer ().get_handle ();
             proxy_connection.peer ().set_handle (ACE_INVALID_HANDLE);
@@ -162,6 +169,13 @@ namespace ACE
                 ::SSL * ssl_ptr = new_connection->peer ().ssl ();
                 ::SSL_set_SSL_CTX (ssl_ptr, this->context_->ssl_context ().context ());
               }
+
+            // Added by bdr
+            {
+                ::SSL * ssl_ptr = new_connection->peer().ssl();
+                int x = ::SSL_set_tlsext_host_name(ssl_ptr, this->host_.c_str());
+                x = x;
+            }
 #endif
             typedef ACE_Connector<connection_type, ACE_SSL_SOCK_Connector> connector_type;
 
