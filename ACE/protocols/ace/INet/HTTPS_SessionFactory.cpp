@@ -69,7 +69,14 @@ namespace ACE
         return 0;
       }
 
+    // added by bdr
+    void SessionFactory_Impl::registerHTTPS()
+    {
+        ACE_Singleton<SessionFactory_Impl, ACE_SYNCH::NULL_MUTEX>::instance();
+    }
+
   }
+
 }
 
 ACE_END_VERSIONED_NAMESPACE_DECL
