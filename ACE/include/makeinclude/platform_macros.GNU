@@ -1,0 +1,1 @@
+../../ace/x86/platform_macros.GNU
