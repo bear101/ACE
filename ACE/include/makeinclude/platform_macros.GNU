@@ -17,6 +17,9 @@ static_libs_only=1
 ssl=1
 c++11=1
 
+CPPFLAGS+=-fPIC -DPIC
+LDFLAGS+=-fPIC
+
 SSL_ROOT=$(TTLIBS_ROOT)/openssl
 INSTALL_PREFIX=$(TTLIBS_ROOT)/ACE
 
