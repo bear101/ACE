@@ -1,0 +1,3 @@
+[submodule "ACE/MPC"]
+	path = ACE/MPC
+	url = https://github.com/bear101/MPC

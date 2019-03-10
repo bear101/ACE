@@ -6,6 +6,10 @@
 #if defined (ACE_HAS_SSL) && ACE_HAS_SSL == 1
 # include "ace/INet/SSL_CallbackManager.h"
 # include "ace/INet/HTTPS_Context.h"
+#include <ace/INet/HTTPS_URL.h>
+#include <ace/INet/HTTPS_SessionFactory.h>
+#include <ace/INet/HTTPS_Session.h>
+
 #endif
 #include "ace/INet/INet_Log.h"
 #include <iostream>
@@ -166,6 +170,7 @@ ACE_TMAIN (int argc, ACE_TCHAR *argv [])
   ACE::HTTPS::Context::set_default_ssl_mode (ssl_mode);
   ACE::HTTPS::Context::set_default_verify_mode (verify_peer);
   ACE::HTTPS::Context::instance ().use_default_ca ();
+  ACE::HTTPS::SessionFactory_Impl::registerHTTPS();
   if (!private_key.empty ())
     {
       if (certificate.empty ())
@@ -221,17 +226,20 @@ ACE_TMAIN (int argc, ACE_TCHAR *argv [])
           return 1;
         }
 
-      ACE::HTTP::URL& http_url = *dynamic_cast<ACE::HTTP::URL*> (url_safe.get ());
+      auto http_url = url_safe.get();
+      //ACE::HTTP::URL& http_url = *dynamic_cast<ACE::HTTP::URL*> ();
 
-      if (!proxy_hostname.empty ())
-        {
-          std::cout << "Setting proxy: " << proxy_hostname.c_str () << ':' << proxy_port << std::endl;
-          http_url.set_proxy (proxy_hostname, proxy_port);
-        }
+      //if (!proxy_hostname.empty ())
+      //  {
+      //    std::cout << "Setting proxy: " << proxy_hostname.c_str () << ':' << proxy_port << std::endl;
+      //    http_url->set_proxy (proxy_hostname, proxy_port);
+      //  }
 
       std::cout << "Opening url...";
       My_HTTP_RequestHandler my_rh;
-      ACE::INet::URLStream urlin = http_url.open (my_rh);
+      ACE::INet::URLStream urlin = http_url->open (my_rh);
+      ACE::HTTP::Status status = my_rh.response().get_status();
+
       if (urlin)
         {
           std::cout << "Received response "

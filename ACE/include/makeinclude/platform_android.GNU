@@ -29,17 +29,18 @@ versioned_so ?= 0
 android_force_clang ?= 1
 
 # This section deals with selecting the architecture/compiler
-# As of writing information on ABIs can be found at https://developer.android.com/ndk/guides/abis
+  CROSS_COMPILE=unknown-android-arch-
 
 ifndef ANDROID_ABI
   ifdef ANDROID_ARCH # Handle Possiblity of ANDROID_ARCH being passed
     ifeq ($(ANDROID_ARCH),arm)
       ANDROID_ABI := armeabi-v7a
-    else
-      ANDROID_ABI := $(ANDROID_ARCH)
-    endif
-  else # Else default to ARMv7
-    ANDROID_ABI := armeabi-v7a
+  endif
+  ifeq ($(ANDROID_ARCH),x86)
+    CROSS_COMPILE=i686-linux-android-
+  endif
+  ifeq ($(ANDROID_ARCH),arm64)
+    CROSS_COMPILE=aarch64-linux-android-
   endif
 endif
 
@@ -77,6 +78,13 @@ endif
 ifeq ($(ANDROID_ABI),x86)
   CROSS_COMPILE := i686-linux-android-
 endif
+
+  # Is this correct??
+  # ifeq ($(ANDROID_ABI),arm64-v8a)
+  #   FLAGS_C_CC += -march=arm64-v8a -mfloat-abi=softfp -mfpu=neon
+  #   LDFLAGS    += -march=arm64-v8a
+  # endif
+
 
 ifeq ($(ANDROID_ABI),x86_64)
   CROSS_COMPILE := x86_64-linux-android-
