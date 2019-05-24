@@ -3,3 +3,4 @@
 #define ACE_LACKS_GETIPNODEBYNAME_IPV6 1
 #define ACE_HAS_CPP11
 #include "config-android.h"
+#undef ACE_LACKS_FD_MASK
