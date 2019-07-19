@@ -4,7 +4,5 @@ ssl=1
 ipv6=1
 c++11=1
 
-SSL_ROOT=$(TTLIBS_ROOT)/openssl
-
 INSTALL_PREFIX=$(TTLIBS_ROOT)/ACE
 include $(ACE_ROOT)/include/makeinclude/platform_linux.GNU
