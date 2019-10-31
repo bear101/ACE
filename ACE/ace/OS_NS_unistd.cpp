@@ -357,7 +357,7 @@ ACE_OS::fork_exec (ACE_TCHAR *argv[])
 
       switch (result)
         {
-        case -1:
+        case static_cast<pid_t>(-1):
           // Error.
           return -1;
         case 0:
@@ -388,7 +388,7 @@ ACE_OS::fork_exec (ACE_TCHAR *argv[])
               ACE_OS::exit (errno);
             }
 #   endif /* ACE_HAS_WCHAR */
-
+          return result;
         default:
           // Server process.  The fork succeeded.
           return result;

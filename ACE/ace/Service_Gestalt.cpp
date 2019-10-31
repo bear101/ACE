@@ -358,7 +358,7 @@ ACE_Service_Gestalt::add_processed_static_svc
   /// associates a service object with the Gestalt and makes the
   /// resource (a Service Object) local to the repository. This is but
   /// the first step in using such SO. The next is the
-  /// "initialization" step. It is typicaly done through a "static"
+  /// "initialization" step. It is typically done through a "static"
   /// service configuration directive.
   ///
   /// In contrast a "dynamic" directive, when processed through the
@@ -788,10 +788,6 @@ ACE_Service_Gestalt::process_directives_i (ACE_Svc_Conf_Param *param)
                 ? ACE_TEXT ("<from file>")
                 : param->source.directive));
 #endif
-
-  // AC 970827 Skip the heap check because yacc allocates a buffer
-  // here which will be reported as a memory leak for some reason.
-  ACE_NO_HEAP_CHECK
 
   // Were we called in the context of the current instance?
   ACE_ASSERT (this == param->config);

@@ -10,6 +10,7 @@
 #include "ace/Arg_Shifter.h"
 #include "orbsvcs/Log_Macros.h"
 #include "ace/OS_NS_strings.h"
+#include "ace/OS_NS_time.h"
 
 #if defined (ACE_WIN32)
 static const HKEY SERVICE_REG_ROOT = HKEY_LOCAL_MACHINE;
@@ -39,7 +40,6 @@ Options::Options ()
 , imr_type_ (STANDALONE_IMR)
 , throw_shutdown_exceptions_ (false)
 , pinger_ (0)
-, threads_ (1)
 , ft_endpoint_ ()
 , ft_update_delay_ (0, DEFAULT_FT_UPDATE_DELAY)
 {
@@ -279,22 +279,6 @@ Options::parse_args (int &argc, ACE_TCHAR *argv[])
           this->ping_timeout_ =
             ACE_Time_Value (0, 1000 * ACE_OS::atoi (shifter.get_current ()));
         }
-#if 0
-      else if (ACE_OS::strcasecmp (shifter.get_current (),
-                                   ACE_TEXT ("--threads")) == 0)
-        {
-          shifter.consume_arg ();
-
-          if (!shifter.is_anything_left () || shifter.get_current ()[0] == '-')
-            {
-              ORBSVCS_ERROR ((LM_ERROR,
-                          ACE_TEXT ("Error: --threads option needs a value\n")));
-              this->print_usage ();
-              return -1;
-            }
-          this->threads_ = ACE_OS::atoi (shifter.get_current ());
-        }
-#endif
       else if (ACE_OS::strcasecmp (shifter.get_current (),
                                    ACE_TEXT ("--ftendpoint")) == 0)
         {
@@ -405,14 +389,16 @@ Options::print_usage (void) const
     ACE_TEXT ("  --backup        Replicate the ImplRepo as the backup ImR\n")
     ACE_TEXT ("  -r              Use the registry for storing/loading settings\n")
     ACE_TEXT ("  -s              Run as a service\n")
-    ACE_TEXT ("  -t secs         Server startup timeout.(Default = 60s)\n")
-    ACE_TEXT ("  -v msecs        Server verification interval.(Default = 10000ms)\n")
-    ACE_TEXT ("  -n msecs        Ping request timeout.(Default = 10ms)\n")
+    ACE_TEXT ("  -t secs         Server startup timeout.(Default = %ds)\n")
+    ACE_TEXT ("  -v msecs        Server verification interval.(Default = %dms)\n")
+    ACE_TEXT ("  -n msecs        Ping request timeout.(Default = %dms)\n")
     ACE_TEXT ("  -i              Ping servers started without activators too.\n")
     ACE_TEXT ("  --lockout       Prevent excessive restart attempts until manual reset.\n")
     ACE_TEXT ("  --UnregisterIfAddressReused,\n")
-    ACE_TEXT ("  -u              Unregister server if its endpoint is used by another\n")
-              ));
+    ACE_TEXT ("  -u              Unregister server if its endpoint is used by another\n"),
+    DEFAULT_START_TIMEOUT,
+    DEFAULT_PING_INTERVAL * ACE_U_ONE_SECOND_IN_MSECS,
+    DEFAULT_PING_TIMEOUT * ACE_U_ONE_SECOND_IN_MSECS));
 }
 
 int
@@ -493,10 +479,6 @@ Options::save_registry_options ()
 
   err = ACE_TEXT_RegSetValueEx (key, ACE_TEXT ("ImrType"), 0, REG_DWORD,
     (LPBYTE) &this->imr_type_ , sizeof (this->imr_type_));
-  ACE_ASSERT (err == ERROR_SUCCESS);
-
-  err = ACE_TEXT_RegSetValueEx (key, ACE_TEXT ("Threads"), 0, REG_DWORD,
-    (LPBYTE) &this->threads_ , sizeof (this->threads_));
   ACE_ASSERT (err == ERROR_SUCCESS);
 
   err = ACE_TEXT_RegSetValueEx (key, ACE_TEXT ("FtEndpoint"), 0, REG_SZ,
@@ -657,14 +639,6 @@ Options::load_registry_options ()
       ACE_ASSERT (type == REG_DWORD);
     }
 
-  sz = sizeof(threads_);
-  err = ACE_TEXT_RegQueryValueEx (key, ACE_TEXT ("Threads"), 0, &type,
-    (LPBYTE) &this->threads_, &sz);
-  if (err == ERROR_SUCCESS)
-    {
-      ACE_ASSERT (type == REG_DWORD);
-    }
-
   sz = sizeof(tmpstr);
   err = ACE_TEXT_RegQueryValueEx (key, ACE_TEXT ("FtEndpoint"), 0, &type,
     (LPBYTE) tmpstr, &sz);
@@ -807,12 +781,6 @@ Options::ImrType
 Options::imr_type (void) const
 {
   return this->imr_type_;
-}
-
-int
-Options::threads (void) const
-{
-  return this->threads_;
 }
 
 const ACE_CString &

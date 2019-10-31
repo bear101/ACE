@@ -19,7 +19,6 @@
 #include "tao/IIOP_Acceptor.inl"
 #endif /* __ACE_INLINE__ */
 
-#include "ace/Auto_Ptr.h"
 #include "ace/OS_NS_string.h"
 #include "ace/os_include/os_netdb.h"
 
@@ -463,7 +462,7 @@ TAO_IIOP_Acceptor::open_i (const ACE_INET_Addr& addr,
                                      this->creation_strategy_,
                                      this->accept_strategy_,
                                      this->concurrency_strategy_,
-                                     0, 0, 0, 1,
+                                     0, 0, 0, ACE_DEFAULT_ACCEPTOR_USE_SELECT,
                                      this->reuse_addr_) == -1)
         {
           if (TAO_debug_level > 0)
@@ -499,7 +498,7 @@ TAO_IIOP_Acceptor::open_i (const ACE_INET_Addr& addr,
                                          this->creation_strategy_,
                                          this->accept_strategy_,
                                          this->concurrency_strategy_,
-                                         0, 0, 0, 1,
+                                         0, 0, 0, ACE_DEFAULT_ACCEPTOR_USE_SELECT,
                                          this->reuse_addr_) != -1)
             {
               found_a_port = true;

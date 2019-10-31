@@ -30,8 +30,11 @@
 #include "tao/Pseudo_VarOut_T.h"
 
 #include "ace/Unbounded_Queue.h"
-#include "ace/Atomic_Op.h"
-#include "ace/Synch_Traits.h"
+#if defined (ACE_HAS_CPP11)
+# include <atomic>
+#else
+# include "ace/Atomic_Op.h"
+#endif /* ACE_HAS_CPP11 */
 
 TAO_BEGIN_VERSIONED_NAMESPACE_DECL
 
@@ -53,8 +56,6 @@ namespace CORBA
   class TAO_DynamicInterface_Export ExceptionList
   {
   public:
-    // = Intialization and termination methods.
-
     /// Constructor.
     ExceptionList (void);
 
@@ -105,7 +106,11 @@ namespace CORBA
     ExceptionList &operator= (const ExceptionList &);
 
     /// Reference counter.
-    ACE_Atomic_Op<TAO_SYNCH_MUTEX, CORBA::ULong> ref_count_;
+#if defined (ACE_HAS_CPP11)
+    std::atomic<uint32_t> refcount_;
+#else
+    ACE_Atomic_Op<TAO_SYNCH_MUTEX, CORBA::ULong> refcount_;
+#endif /* ACE_HAS_CPP11 */
 
     /// Internal list of typecodes.
     ACE_Unbounded_Queue<CORBA::TypeCode_ptr> tc_list_;

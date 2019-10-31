@@ -22,6 +22,11 @@
 #endif /* ACE_LACKS_PRAGMA_ONCE */
 
 #include "tao/Intrusive_Ref_Count_Handle_T.h"
+#if defined (ACE_HAS_CPP11)
+# include <atomic>
+#else
+# include "ace/Atomic_Op.h"
+#endif /* ACE_HAS_CPP11 */
 
 class LiveCheck;
 class LiveEntry;
@@ -71,7 +76,7 @@ enum LiveStatus {
 class Locator_Export LiveListener
 {
  public:
-  /// Construct a new listener. The server name suppled is used to
+  /// Construct a new listener. The server name supplied is used to
   /// look up a listener entry in the LiveCheck map.
   LiveListener (const char *server);
 
@@ -81,7 +86,7 @@ class Locator_Export LiveListener
   /// is received. Returns true if finished listening
   virtual bool status_changed (LiveStatus status) = 0;
 
-  /// accessor for the server name. Used by the LiveCheck to associate a listener
+  /// Accessor for the server name. Used by the LiveCheck to associate a listener
   const char *server (void) const;
 
   LiveListener *_add_ref (void);
@@ -91,8 +96,11 @@ class Locator_Export LiveListener
   ACE_CString server_;
 
  private:
-  int refcount_;
-  TAO_SYNCH_MUTEX lock_;
+#if defined (ACE_HAS_CPP11)
+  std::atomic<int> refcount_;
+#else
+  ACE_Atomic_Op<TAO_SYNCH_MUTEX, int> refcount_;
+#endif /* ACE_HAS_CPP11 */
 };
 
 typedef TAO_Intrusive_Ref_Count_Handle<LiveListener> LiveListener_ptr;
@@ -114,7 +122,8 @@ class Locator_Export LiveEntry
   LiveEntry (LiveCheck *owner,
              const char *server,
              bool may_ping,
-             ImplementationRepository::ServerObject_ptr ref);
+             ImplementationRepository::ServerObject_ptr ref,
+             int pid);
   ~LiveEntry (void);
 
   void release_callback (void);
@@ -125,19 +134,21 @@ class Locator_Export LiveEntry
   void reset_status (void);
 
   /// the current state value as text
-  static const ACE_TCHAR *status_name (LiveStatus s);
+  static const char *status_name (LiveStatus s);
 
   void update_listeners (void);
   bool validate_ping (bool &want_reping, ACE_Time_Value &next);
   void do_ping (PortableServer::POA_ptr poa);
   const ACE_Time_Value &next_check (void) const;
   static void set_reping_limit (int max);
-  bool reping_available (void);
+  bool reping_available (void) const;
   int next_reping (void);
   void max_retry_msec (int max);
   const char *server_name (void) const;
   void set_pid (int pid);
-  bool has_pid (int pid);
+  bool has_pid (int pid) const;
+  int pid (void) const;
+  bool may_ping (void) const;
 
  private:
   LiveCheck *owner_;
@@ -157,7 +168,6 @@ class Locator_Export LiveEntry
 
   static const int reping_msec_ [];
   static int reping_limit_;
-
 };
 
 //---------------------------------------------------------------------------
@@ -214,16 +224,16 @@ typedef ACE_INT32 LC_token_type;
 class Locator_Export LC_TimeoutGuard
 {
  public:
-  /// construct a new stack-based guard. This sets a flag in the owner that will
+  /// Construct a new stack-based guard. This sets a flag in the owner that will
   /// be cleared on destruction.
   LC_TimeoutGuard (LiveCheck *owner, LC_token_type token);
 
-  /// releases the flag. If the LiveCheck received any requests for an immediate
-  /// or defered ping during this time, schedule it now.
+  /// Releases the flag. If the LiveCheck received any requests for an immediate
+  /// or deferred ping during this time, schedule it now.
   ~LC_TimeoutGuard (void);
 
-  /// Returns true if the busy flag in the owner was already set.
-  bool blocked (void);
+  /// Returns true if the in handle timeout in the owner was already set.
+  bool blocked (void) const;
 
  private:
   LiveCheck *owner_;
@@ -258,9 +268,10 @@ class Locator_Export LiveCheck : public ACE_Event_Handler
   bool has_server (const char *server);
   void add_server (const char *server,
                    bool may_ping,
-                   ImplementationRepository::ServerObject_ptr ref);
+                   ImplementationRepository::ServerObject_ptr ref,
+                   int pid);
   void set_pid (const char *server, int pid);
-  void remove_server (const char *server, int pid = 0);
+  void remove_server (const char *server, int pid);
   bool remove_per_client_entry (LiveEntry *entry);
   bool add_listener (LiveListener *listener);
   bool add_poll_listener (LiveListener *listener);
@@ -283,7 +294,8 @@ class Locator_Export LiveCheck : public ACE_Event_Handler
                                   ACE_Equal_To<ACE_CString>,
                                   ACE_Null_Mutex> LiveEntryMap;
   typedef ACE_Unbounded_Set<LiveEntry *> PerClientStack;
-  typedef ACE_Unbounded_Set<ACE_CString> NameStack;
+  typedef std::pair<ACE_CString, int> NamePidPair;
+  typedef ACE_Unbounded_Set<NamePidPair> NamePidStack;
 
   LiveEntryMap entry_map_;
   PerClientStack per_client_;
@@ -291,10 +303,14 @@ class Locator_Export LiveCheck : public ACE_Event_Handler
   ACE_Time_Value ping_interval_;
   bool running_;
   LC_token_type token_;
+  /// Flag to check whether we are in handle timeout. Because this can be
+  /// called re-entrant it is zero when we are not in handle timeout
   int handle_timeout_busy_;
   bool want_timeout_;
   ACE_Time_Value deferred_timeout_;
-  NameStack removed_entries_;
+  /// Contains a list of servers which got removed during the handle_timeout,
+  /// these will be removed at the end of the handle_timeout.
+  NamePidStack removed_entries_;
 };
 
 #endif /* IMR_LIVECHECK_H_  */

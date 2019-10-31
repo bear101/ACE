@@ -40,7 +40,11 @@
 #endif /* TAO_HAS_AMI */
 
 #include "ace/SString.h"
-#include "ace/Atomic_Op.h"
+#if defined (ACE_HAS_CPP11)
+# include <atomic>
+#else
+# include "ace/Atomic_Op.h"
+#endif /* ACE_HAS_CPP11 */
 
 TAO_BEGIN_VERSIONED_NAMESPACE_DECL
 
@@ -66,7 +70,6 @@ namespace CORBA
   class TAO_DynamicInterface_Export Request
   {
   public:
-
     /// Return the target of this request.
     CORBA::Object_ptr target (void) const;
 
@@ -151,7 +154,7 @@ namespace CORBA
     void handle_response (TAO_InputCDR &incoming, GIOP::ReplyStatusType reply_status);
 
 #if defined (TAO_HAS_AMI)
-    /// The 'asychronous' send method. The object is a DSI based callback
+    /// The 'asynchronous' send method. The object is a DSI based callback
     /// handler. This handler must implement Messaging::ReplyHandler
     void sendc (CORBA::Object_ptr handler);
 
@@ -214,7 +217,6 @@ namespace CORBA
     ~Request (void);
 
   private:
-
     /// Target object.
     CORBA::Object_ptr target_;
 
@@ -246,7 +248,11 @@ namespace CORBA
     CORBA::Context_ptr ctx_;
 
     /// Reference counting.
+#if defined (ACE_HAS_CPP11)
+    std::atomic<uint32_t> refcount_;
+#else
     ACE_Atomic_Op<TAO_SYNCH_MUTEX, unsigned long> refcount_;
+#endif /* ACE_HAS_CPP11 */
 
     /// Protect the response_received_.
     TAO_SYNCH_MUTEX lock_;

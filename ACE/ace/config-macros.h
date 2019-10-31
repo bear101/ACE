@@ -4,7 +4,7 @@
 /**
  *  @file   config-macros.h
  *
- *  @author (Originally in OS.h)Doug Schmidt <schmidt@cs.wustl.edu>
+ *  @author (Originally in OS.h)Doug Schmidt <d.schmidt@vanderbilt.edu>
  *  @author Jesper S. M|ller<stophph@diku.dk>
  *  @author and a cast of thousands...
  *
@@ -113,6 +113,11 @@
 #     define ACE_HAS_DYNAMIC_LINKING 1
 #   endif
 # endif /* ACE_HAS_DYNAMIC_LINKING */
+
+# if defined (ACE_HAS_DYNAMIC_LINKING) && ACE_HAS_DYNAMIC_LINKING == 0 && \
+     defined (ACE_HAS_SVR4_DYNAMIC_LINKING)
+#   undef ACE_HAS_SVR4_DYNAMIC_LINKING
+# endif /* ACE_HAS_DYNAMIC_LINKING == 0 */
 
 # if defined (ACE_USES_FIFO_SEM)
 #   if defined (ACE_HAS_POSIX_SEM) || defined (ACE_LACKS_MKFIFO) || defined (ACE_LACKS_FCNTL)
@@ -266,7 +271,7 @@
 # endif /* ghs || __GNUC__ || ..... */
 #endif /* !ACE_UNUSED_ARG */
 
-#if defined (_MSC_VER) || defined (ghs) || defined (__DECCXX) || defined(__BORLANDC__) || defined (ACE_RM544) || defined (__USLC__) || defined (__DCC__) || defined (__PGI) || defined (__TANDEM) || (defined (__HP_aCC) && (__HP_aCC < 39000 || __HP_aCC >= 60500))
+#if defined (_MSC_VER) || defined (ghs) || defined (__DECCXX) || defined(__BORLANDC__) || defined (ACE_RM544) || defined (__USLC__) || defined (__DCC__) || defined (__PGI) || defined (__TANDEM) || (defined (__HP_aCC) && (__HP_aCC < 39000 || __HP_aCC >= 60500)) || defined (__IAR_SYSTEMS_ICC__)
 # define ACE_NOTREACHED(a)
 #else  /* ghs || ..... */
 # define ACE_NOTREACHED(a) a
