@@ -3,7 +3,6 @@
 #include "ace/Get_Opt.h"
 #include "ace/OS_NS_unistd.h"
 
-
 bool killit = false;
 
 int
@@ -79,8 +78,10 @@ ACE_TMAIN (int argc, ACE_TCHAR *argv[])
           }
 #endif
       }
-    return 0;
 
+    orb->destroy ();
+
+    return 0;
   }
   catch (const CORBA::Exception& ex)
     {
