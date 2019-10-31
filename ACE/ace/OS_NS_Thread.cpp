@@ -13,11 +13,13 @@
 #include "ace/OS_NS_errno.h"
 #include "ace/OS_NS_ctype.h"
 #include "ace/Log_Category.h" // for ACE_ASSERT
-// This is necessary to work around nasty problems with MVS C++.
 #include "ace/Auto_Ptr.h"
 #include "ace/Thread_Mutex.h"
 #include "ace/Condition_Thread_Mutex.h"
 #include "ace/Guard_T.h"
+#ifdef ACE_HAS_GETTID
+#  include "ace/OS_NS_sys_resource.h" // syscall for gettid impl
+#endif
 
 extern "C" void
 ACE_MUTEX_LOCK_CLEANUP_ADAPTER_NAME (void *args)
@@ -126,7 +128,6 @@ ACE_TSS_Emulation::tss_base (void* ts_storage[], u_int *ts_created)
 
       if (!key_created_)
         {
-          ACE_NO_HEAP_CHECK;
           if (ACE_OS::thr_keycreate_native (&native_tss_key_,
                                      &ACE_TSS_Emulation_cleanup) != 0)
             {
@@ -161,8 +162,6 @@ ACE_TSS_Emulation::tss_base (void* ts_storage[], u_int *ts_created)
       // storage array.
       if (ts_storage == 0)
         {
-          ACE_NO_HEAP_CHECK;
-
 #ifdef ACE_HAS_ALLOC_HOOKS
           const size_t n = ACE_TSS_THREAD_KEYS_MAX * sizeof (void *);
           ACE_Allocator *const alloc = ACE_Allocator::instance ();
@@ -599,7 +598,7 @@ public:
     USE,
     DESTROY
   };
-  TSS_Cleanup_Instance (Purpose purpose = USE);
+  explicit TSS_Cleanup_Instance (Purpose purpose = USE);
   ~TSS_Cleanup_Instance();
 
   bool valid();
@@ -1157,7 +1156,7 @@ ACE_OS::cond_broadcast (ACE_cond_t *cv)
         result = -1;
       // Wait for all the awakened threads to acquire their part of
       // the counting semaphore.
-#   if defined (ACE_VXWORKS)
+#   if defined (ACE_VXWORKS) || defined (ACE_MQX)
       else if (ACE_OS::sema_wait (&cv->waiters_done_) == -1)
 #   else
       else if (ACE_OS::event_wait (&cv->waiters_done_) == -1)
@@ -1181,7 +1180,7 @@ ACE_OS::cond_destroy (ACE_cond_t *cv)
 # if defined (ACE_HAS_THREADS)
 #   if defined (ACE_HAS_WTHREADS)
   ACE_OS::event_destroy (&cv->waiters_done_);
-#   elif defined (ACE_VXWORKS)
+#   elif defined (ACE_VXWORKS) || defined (ACE_MQX)
   ACE_OS::sema_destroy (&cv->waiters_done_);
 #   endif /* ACE_VXWORKS */
   int result = 0;
@@ -1231,7 +1230,7 @@ ACE_OS::cond_init (ACE_cond_t *cv, short type, const char *name, void *arg)
     result = -1;
   else if (ACE_OS::thread_mutex_init (&cv->waiters_lock_) == -1)
     result = -1;
-#   if defined (ACE_VXWORKS)
+#   if defined (ACE_VXWORKS) || defined (ACE_MQX)
   else if (ACE_OS::sema_init (&cv->waiters_done_, 0, type) == -1)
 #   else
   else if (ACE_OS::event_init (&cv->waiters_done_) == -1)
@@ -1261,7 +1260,7 @@ ACE_OS::cond_init (ACE_cond_t *cv, short type, const wchar_t *name, void *arg)
     result = -1;
   else if (ACE_OS::thread_mutex_init (&cv->waiters_lock_) == -1)
     result = -1;
-#     if defined (ACE_VXWORKS)
+#     if defined (ACE_VXWORKS) || defined (ACE_MQX)
   else if (ACE_OS::sema_init (&cv->waiters_done_, 0, type) == -1)
 #     else
   else if (ACE_OS::event_init (&cv->waiters_done_) == -1)
@@ -1392,7 +1391,7 @@ ACE_OS::cond_wait (ACE_cond_t *cv,
   // If we're the last waiter thread during this particular broadcast
   // then let all the other threads proceed.
   else if (last_waiter)
-#   if defined (ACE_VXWORKS)
+#   if defined (ACE_VXWORKS) || defined (ACE_MQX)
     ACE_OS::sema_post (&cv->waiters_done_);
 #   else
     ACE_OS::event_signal (&cv->waiters_done_);
@@ -1420,7 +1419,7 @@ ACE_OS::cond_timedwait (ACE_cond_t *cv,
   // Handle the easy case first.
   if (timeout == 0)
     return ACE_OS::cond_wait (cv, external_mutex);
-#   if defined (ACE_HAS_WTHREADS) || defined (ACE_VXWORKS)
+#   if defined (ACE_HAS_WTHREADS) || defined (ACE_VXWORKS) || defined (ACE_MQX)
 
   // Prevent race conditions on the <waiters_> count.
   if (ACE_OS::thread_mutex_lock (&cv->waiters_lock_) != 0)
@@ -1482,6 +1481,8 @@ ACE_OS::cond_timedwait (ACE_cond_t *cv,
       int const ticks_per_sec = ::sysClkRateGet ();
       int const ticks = msec_timeout * ticks_per_sec / ACE_ONE_SECOND_IN_MSECS;
       result = ::semTake (cv->sema_.sema_, ticks);
+#     else
+      result = ACE_OS::sema_wait (&cv->sema_, timeout);
 #     endif /* ACE_WIN32 || VXWORKS */
     }
 
@@ -3557,7 +3558,11 @@ ACE_OS::thr_create (ACE_THR_FUNC func,
   else
     thread_args = thread_adapter;
 
+#if defined (ACE_HAS_CPP11)
+  std::unique_ptr <ACE_Base_Thread_Adapter> auto_thread_args;
+#else
   auto_ptr <ACE_Base_Thread_Adapter> auto_thread_args;
+#endif /* ACE_HAS_CPP11 */
 
   if (thread_adapter == 0)
     ACE_auto_ptr_reset (auto_thread_args,
@@ -4805,6 +4810,16 @@ ACE_OS::unique_name (const void *object,
                     static_cast<int> (ACE_OS::getpid ()));
 }
 #endif
+
+pid_t
+ACE_OS::thr_gettid ()
+{
+#ifdef ACE_HAS_GETTID
+  return syscall (SYS_gettid);
+#else
+  ACE_NOTSUP_RETURN (-1);
+#endif
+}
 
 ACE_END_VERSIONED_NAMESPACE_DECL
 

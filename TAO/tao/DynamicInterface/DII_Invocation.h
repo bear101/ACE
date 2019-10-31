@@ -56,7 +56,6 @@ namespace TAO
 #endif /*TAO_HAS_INTERCEPTORS == 1*/
 
   protected:
-
     virtual Invocation_Status handle_user_exception (TAO_InputCDR &cdr);
 
   private:
@@ -82,7 +81,6 @@ namespace TAO
     virtual Dynamic::ParameterList *arguments (void);
 #endif /*TAO_HAS_INTERCEPTORS == 1*/
   };
-
 }
 
 TAO_END_VERSIONED_NAMESPACE_DECL

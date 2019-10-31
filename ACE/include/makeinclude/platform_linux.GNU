@@ -57,7 +57,9 @@ DCCFLAGS += -ggdb
 DLD      = $(CXX)
 LD       = $(CXX)
 
-ifneq ($(dynamic_loader),0)
+ifeq ($(dynamic_loader),0)
+  CPPFLAGS += -DACE_HAS_DYNAMIC_LINKING=0
+else
   LIBS     += -ldl
 endif
 
@@ -93,16 +95,6 @@ ifeq ($(CXX_VERSION),4.0.2)
 else
   OCFLAGS ?= -O3
   OCCFLAGS ?= -O3
-endif
-
-# Added line below to support "Executable Shared Object" files (as
-# needed by the service configurator).
-# Marius Kjeldahl <mariusk@sn.no, marius@funcom.com>
-ifeq ($(threads),1)
-    ESOBUILD = $(COMPILEESO.cc) $(PIC) -shared -o $(VSHDIR)$*.so $<
-    ifndef PRELIB
-       PRELIB = @true
-    endif # ! PRELIB
 endif
 
 #### GNU gas has a string limit of 4096 characters.  On Alphas,
