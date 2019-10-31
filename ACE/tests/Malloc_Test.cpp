@@ -6,7 +6,7 @@
  *   This is a test of the position-independent <ACE_Malloc> memory
  *   manager using the <ACE_MMAP_Memory_Pool> and <ACE_Process_Mutex>.
  *
- *  @author Douglas C. Schmidt <schmidt@cs.wustl.edu>
+ *  @author Douglas C. Schmidt <d.schmidt@vanderbilt.edu>
  */
 //=============================================================================
 
@@ -23,7 +23,6 @@
 #include "ace/RW_Thread_Mutex.h"
 #include "ace/Time_Value.h"
 #include "ace/OS_NS_unistd.h"
-
 
 
 #if defined (ACE_HAS_PROCESS_SPAWN)

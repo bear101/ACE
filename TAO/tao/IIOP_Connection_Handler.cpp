@@ -349,7 +349,7 @@ TAO_IIOP_Connection_Handler::open (void*)
 
       TAOLIB_DEBUG ((LM_DEBUG,
                   ACE_TEXT ("TAO (%P|%t) - IIOP_Connection_Handler::open, IIOP ")
-                  ACE_TEXT ("connection to peer <%s> on %d\n"),
+                  ACE_TEXT ("connection to peer <%s> on [%d]\n"),
                   client_addr, this->peer ().get_handle ()));
     }
 
@@ -380,7 +380,11 @@ TAO_IIOP_Connection_Handler::close_connection (void)
     {
       struct linger lval;
       lval.l_onoff = 1;
+#if defined(ACE_HAS_LINGER_MS)
+      lval.l_linger_ms = linger * 1000;
+#else
       lval.l_linger = (u_short)linger;
+#endif
       if (this->peer ().set_option(SOL_SOCKET,
                                    SO_LINGER,
                                    (void*) &lval,
@@ -477,7 +481,7 @@ TAO_IIOP_Connection_Handler::add_transport_to_cache (void)
   if (this->peer ().get_remote_addr (addr) == -1)
     return -1;
 
-  // Construct an  IIOP_Endpoint object
+  // Construct an IIOP_Endpoint object
   TAO_IIOP_Endpoint endpoint (
       addr,
       this->orb_core()->orb_params()->cache_incoming_by_dotted_decimal_address ());
@@ -662,9 +666,8 @@ TAO_IIOP_Connection_Handler::set_dscp_codepoint (CORBA::Boolean set_network_prio
 void
 TAO_IIOP_Connection_Handler::abort (void)
 {
-  struct linger lval;
+  struct linger lval = { 0, 0 };
   lval.l_onoff = 1;
-  lval.l_linger = 0;
 
   if (this->peer ().set_option(SOL_SOCKET,
                                SO_LINGER,

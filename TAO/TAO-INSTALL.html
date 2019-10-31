@@ -31,7 +31,7 @@ to run TAO on:<P>
 <table width="100%" border=1>
   <tr valign=top>
     <td><b>Fully supported, i.e., continually tested and used daily</b></td>
-    <td>Solaris 9, Windows (Microsoft Visual C++ 7.1, 9.0, 10.0, 11.0, 12, and 14.0),
+    <td>Windows (Microsoft Visual C++ 7.1, 9.0, 10.0, 11.0, 12, 14.0, 14.1, and 14.2),
         Linux/Intel (Redhat, Debian, and SuSe), Android
     </td>
   </tr>
@@ -42,7 +42,7 @@ to run TAO on:<P>
   </tr>
   <tr valign=top>
     <td><b>Partially supported, i.e., infrequently tested</b></td>
-    <td> FreeBSD, NetBSD, Windows CE, MacOSX, Linux/Alpha (RedHat, SuSE, and Debian), and AIX 5.x
+    <td>Solaris 9, FreeBSD, NetBSD, Windows CE, MacOSX, Linux/Alpha (RedHat, SuSE, and Debian), and AIX 5.x
     </td>
   </tr>
   <tr valign=top bgcolor="#AFAFAF">
@@ -50,7 +50,7 @@ to run TAO on:<P>
     <td></td>
   </tr>
   <tr valign=top>
-    <td><b>Support were dropped recently</b></td>
+    <td><b>Formerly Supported Platforms</b></td>
     <td> Embarcadero C++ Builder, Sun/C++ 5.1 through 5.4, g++
          prior to 2.95.x, HP/UX 10.x, pSoS, Chorus, DEC UNIX, SCO, UnixWare, MVS,
          Windows 9x/ME, Chorus, Tandem NS, OpenVMS 8.3 IA64
@@ -62,12 +62,11 @@ to run TAO on:<P>
 TAO.  If you have <A
 HREF="../docs/ACE-porting.html">porting
 questions</A> or have a problem compiling the TAO along with ACE
-wrappers on the platforms shown above please send email to either the
-<A HREF="news:comp.soft-sys.ace">Newsgroup</A> or to the <A
-HREF="mailto:tao-users@list.isis.vanderbilt.edu">TAO mailing list</A> and we'll
-try to help you fix the problems.  You can also submit bug reports and
-enhancement requests in our
-<a href="../docs/usage-bugzilla.html">bug tracking system</a>.<P>
+wrappers on the platforms shown above please send email to the <A
+HREF="http://www.dre.vanderbilt.edu/~schmidt/TAO-mail.html">TAO mailing list</A> and we'll
+try to help you fix the problems.  You can also submit issues and
+enhancement requests through
+<a href="https://github.com/DOCGroup/ACE_TAO">github</a>.<P>
 
 TAO can be obtained <A
 HREF="http://download.dre.vanderbilt.edu">electronically</A>
@@ -143,7 +142,7 @@ bundle as a single piece instead of trying to mix and match things up.<P>
           <LI>Create config.h and platform_macros.GNU at
           the right places</LI>
           <LI>Delete all the GNUmakefiles (or sln and
-          vproj file as the case may be) from the TAO distrbution using
+          vproj file as the case may be) from the TAO distribution using
           the 'find' command.</LI>
           <LI>Change directory to $TAO_ROOT.</LI>
           <LI>Run MPC like this, $ACE_ROOT/bin/mwc.pl TAO_ACE.mwc -type gnuace </LI>
@@ -394,7 +393,7 @@ you need to have <code>TAO_IDL</code> compiled.
 <H4>Visual C++ 7.1 and newer</H4>
 
 <P>It works best if TAO is placed in ACE_wrappers so TAO ends up in
-<CODE>ACE_wrappers\TAO</CODE> because the Visual C++ 7.1 Project files
+<CODE>ACE_wrappers\TAO</CODE> because the Visual Studio Project files
 are setup up to work in this configuration. If you move it, then make
 sure you regenerate the project files to look for the include and
 library files in the correct place. The default place for placing the
@@ -410,7 +409,7 @@ project </a> file.</P>
       compiler under MSVC.  If you intend to also use the release
       version of the libraries in the same workspace you have to be
       careful, since the executable name for TAO_IDL is same in debug
-      and release builds. You can use only or the oethr in the same
+      and release builds. You can use only or the other in the same
       workspace. This shouldn't be an issue since the projects for
       tests and examples are set up to transparently use one or the
       other.
@@ -425,15 +424,6 @@ project </a> file.</P>
       <CODE>tests\tests.sln</CODE>
       and build both client and server. <P>
 </OL>
-
-<H4>Visual C++ 7.0</H4>
-The DOC group doesn't support TAO on VC++ 7.0 since the libraries that
-were shipped with VC++ 7.0 did not work well. The DOC group supports
-only VC++ 7.1, which is used by their sponsors. The above mentioned
-points are also relevant to users who are trying to use TAO with VC++
-7.1. Additionally, all required options are set for the generated .sln
-files. If something is missing then it is probably a bug with
-MPC. Please report such bugs to the tao-users newsgroups.
 
 <H4>Upgrading From Older Releases</H4>
 
@@ -472,10 +462,6 @@ The correct way is:
 <P>Several of TAO's tests and examples contain perl scripts that automate the
 execution of these tests. The scripts are found as "run_test.pl" in the
 directory of the test.</p>
-
-<P> The versions of perl that we use are 5.005_02 on NT and 5.003 on Solaris.
-The scripts may work on earlier versions of perl, but we cannot say for sure
-that they do.</P>
 
 <HR>
 <P>
@@ -538,26 +524,36 @@ If users are building from our <a
 href="https://github.com/DOCGroup/ACE_TAO">git archive</a> the
 GNUmakefiles, and project files for building on various platforms will
 not be available. Users from git are expected to generate them
-using <a href="../MPC/docs/README">MPC</a> before building ACE, TAO or
-CIAO. We point out some suggestions below to get bootstrapped
+using <a href="../MPC/docs/README">MPC</a> before building ACE or TAO.
+We point out some suggestions below to get bootstrapped
 quickly.
 
 <UL>
   <LI> Please see <a href="#MPC"> instructions </a> above to download
-  MPC from our git repository <p>
+  MPC from our git repository</LI><p/>
   <LI>Please make sure that you have <a href="http://www.perl.org">
   perl</a> installed, preferably perl
    5.8 or higher. Users on Win32 based platforms are recommended to use
   <a href="http://www.activestate.com/Products/ActivePerl/"> Active
   State Perl </a>. We use active state perl without problems. We have
   ran into problems trying to use the cygwin version of perl on Win32
-  based platforms. <p>
+  based platforms.</LI><p/>
+  <LI>When building from git, the ACE_ROOT and TAO_ROOT environment
+  variable settings differ from their settings in the ACE_wrappers
+  prepackaged source distribution:
+    <UL>
+      <LI>ACE_ROOT should point to the ACE subdirectory of the top level
+      ACE_TAO directory</LI>
+      <LI>TAO_ROOT should point to the TAO subdirectory of the top level
+      ACE_TAO directory</LI>
+    </UL>
+  </LI><p/>
   <LI>If you just want to build TAO and associated tests, examples,
   and associated utility libraries, we recommend the following
   alternatives:
     <UL>
     <LI> Build ACE and TAO separately. ACE needs to be built first and
-  instructins for building ACE are available at <a
+  instructions for building ACE are available at <a
   href="../ACE/ACE-INSTALL.html#MPC">ACE-INSTALL</a>. GNUmakefiles and
   project files for TAO can be generated by using the following
   commands:<p>
@@ -565,7 +561,7 @@ quickly.
    from <CODE> $TAO_ROOT </CODE> to generate GNUmakefiles. Use <CODE>
   -type vc71 </CODE>  to generate VC71 project and solution files,
   or <CODE>-type vc8</CODE> for VC8 project and solution files, or
-   <CODE>-type bmake</CODE> for Borland C++ make files.<p>
+   <CODE>-type bmake</CODE> for Borland C++ make files.</LI><p/>
    <LI> Build ACE+TAO together in one shot. To do that please issue
   the following commands: <p>
   <CODE> $ACE_ROOT/bin/mwc.pl TAO_ACE.mwc </CODE> <p>
@@ -576,13 +572,11 @@ quickly.
   generate VC71 project and workspace files. <CODE>TAO_ACE.sln</CODE>
   can be used by users to build ACE+TAO from a single workspace
   file. Users can use <CODE> -type vc8 </CODE> to generate the VC8
-  solutions files. <p>
-  </UL>
-  <LI>If you want to build CIAO and its associated libraries
-  please see <a href="CIAO/CIAO-INSTALL.html"> CIAO-INSTALL <a> for
-  details.
-
-  </UL>
+  solutions files.
+    </LI>
+    </UL>
+  </LI><p/>
+</UL>
 
 
 <HR><P>
