@@ -153,7 +153,11 @@ ifeq (,$(CROSS_COMPILE))
     ifeq ($(ANDROID_ARCH),x86)
       CROSS_COMPILE=i686-linux-android-
     else
-      CROSS_COMPILE=unknown-android-arch-
+      ifeq ($(ANDROID_ARCH),x86_64)
+        CROSS_COMPILE=x86_64-linux-android-
+      else
+        CROSS_COMPILE=unknown-android-arch-
+      endif
     endif
   endif
 endif
