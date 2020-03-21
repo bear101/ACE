@@ -11,7 +11,7 @@
  *  numbers are prime.
  *
  *  @author Andres Kruse <Andres.Kruse@cern.ch>
- *  @author Douglas C. Schmidt <schmidt@cs.wustl.edu>
+ *  @author Douglas C. Schmidt <d.schmidt@vanderbilt.edu>
  *  @author and Per Andersson <pera@ipso.se>
  */
 //=============================================================================
@@ -55,12 +55,10 @@ static ATOMIC_INT method_request_count (0);
  */
 class Prime_Scheduler : public ACE_Task_Base
 {
-
   friend class Method_Request_work;
   friend class Method_Request_name;
   friend class Method_Request_end;
 public:
-  // = Initialization and termination methods.
   /// Constructor.
   Prime_Scheduler (const ACE_TCHAR *,
                    Prime_Scheduler * = 0);

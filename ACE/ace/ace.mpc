@@ -1,4 +1,4 @@
-//  -*- MPC -*- now wouldn't this be cool...
+//  -*- MPC -*-
 project(ACE) : ace_output, acedefaults, install, other, codecs, token, svcconf, uuid, filecache, versioned_namespace, pkgconfig, support_ostream {
   avoids       = ace_for_tao
   sharedname   = ACE
@@ -92,6 +92,7 @@ project(ACE) : ace_output, acedefaults, install, other, codecs, token, svcconf, 
     Lock.cpp
     Log_Category.cpp
     Log_Msg.cpp
+    Log_Msg_Android_Logcat.cpp
     Log_Msg_Backend.cpp
     Log_Msg_Callback.cpp
     Log_Msg_IPC.cpp
@@ -120,6 +121,7 @@ project(ACE) : ace_output, acedefaults, install, other, codecs, token, svcconf, 
     Message_Queue_Vx.cpp
     Method_Request.cpp
     MMAP_Memory_Pool.cpp
+    MQX_Filesystem.cpp
     Msg_WFMO_Reactor.cpp
     Monitor_Admin.cpp
     Monitor_Admin_Manager.cpp
@@ -467,7 +469,6 @@ project(ACE) : ace_output, acedefaults, install, other, codecs, token, svcconf, 
     Version.h
     Versioned_Namespace.h
     ace_wchar.h
-    ace_wchar.inl
     checked_iterator.h
     config-*.h
     config.h
@@ -481,7 +482,6 @@ project(ACE) : ace_output, acedefaults, install, other, codecs, token, svcconf, 
 
   Documentation_Files {
     README
-    ../VERSION
   }
 
   Pkgconfig_Files {
@@ -497,6 +497,7 @@ project(ACE) : ace_output, acedefaults, install, other, codecs, token, svcconf, 
     ../bin/add_rel_link.sh
     ../bin/depgen.pl
     ../bin/ace_install_pkgconfig.pl
+    ../bin/generate_export_file.pl
   }
   InstallData_Files {
     gendir = include
@@ -505,7 +506,7 @@ project(ACE) : ace_output, acedefaults, install, other, codecs, token, svcconf, 
   InstallData_Files {
     gendir = .
     ../README
-    ../VERSION
+    ../VERSION.txt
     ../PROBLEM-REPORT-FORM
     ../NEWS
     ../COPYING

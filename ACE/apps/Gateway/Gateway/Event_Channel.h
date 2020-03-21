@@ -4,7 +4,7 @@
 /**
  *  @file    Event_Channel.h
  *
- *  @author Doug Schmidt <schmidt@cs.wustl.edu>
+ *  @author Doug Schmidt <d.schmidt@vanderbilt.edu>
  */
 //=============================================================================
 
@@ -33,7 +33,6 @@ typedef ACE_Null_Mutex MAP_MUTEX;
 class ACE_Svc_Export Event_Channel : public ACE_Event_Handler
 {
 public:
-  // = Initialization and termination methods.
   Event_Channel (void);
   ~Event_Channel (void);
 

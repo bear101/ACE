@@ -217,6 +217,7 @@
 /Sigset_Ops_Test
 /Simple_Message_Block_Test
 /Singleton_Test
+/Singleton_Restart_Test
 /SOCK_Connector_Test
 /SOCK_Dgram_Bcast_Test
 /SOCK_Dgram_Test
@@ -260,6 +261,7 @@
 /TSS_Test
 /Unbounded_Set_Test
 /Unbounded_Set_Test_Ex
+/UNIX_Addr_Test
 /UnloadLibACE
 /Upgradable_RW_Test
 /UPIPE_SAP_Test
@@ -271,3 +273,7 @@
 /XtAthenaReactor_Test
 /XtMotifReactor_Test
 /XtReactor_Test
+/Compiler_Features_36_Test
+/Compiler_Features_37_Test
+/Compiler_Features_38_Test
+/SOCK_Acceptor_Test

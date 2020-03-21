@@ -26,8 +26,11 @@
 
 #include "ace/Unbounded_Queue.h"
 #include "ace/Thread_Mutex.h"
-#include "ace/Atomic_Op.h"
-
+#if defined (ACE_HAS_CPP11)
+# include <atomic>
+#else
+# include "ace/Atomic_Op.h"
+#endif /* ACE_HAS_CPP11 */
 
 TAO_BEGIN_VERSIONED_NAMESPACE_DECL
 
@@ -103,7 +106,6 @@ namespace CORBA
     typedef NamedValue_out _out_type;
 
   protected:
-
     /// Destructor
     /**
      * Protected destructor to enforce proper memory management
@@ -112,15 +114,17 @@ namespace CORBA
     ~NamedValue (void);
 
   private:
-
     /// private constructor. Cannot be directly instantiated other than
     /// by its friends.
     NamedValue (void);
 
   private:
-
     /// Reference counter.
+#if defined (ACE_HAS_CPP11)
+    std::atomic<uint32_t> refcount_;
+#else
     ACE_Atomic_Op<TAO_SYNCH_MUTEX, unsigned long> refcount_;
+#endif /* ACE_HAS_CPP11 */
 
     /// holds the value
     Any any_;
@@ -234,7 +238,6 @@ namespace CORBA
     typedef NVList_out _out_type;
 
   protected:
-
     /// Destructor
     /**
      * Protected destructor to enforce proper memory management
@@ -263,7 +266,11 @@ namespace CORBA
     ULong max_;
 
     /// Reference counter.
+#if defined (ACE_HAS_CPP11)
+    std::atomic<uint32_t> refcount_;
+#else
     ACE_Atomic_Op<TAO_SYNCH_MUTEX, unsigned long> refcount_;
+#endif /* ACE_HAS_CPP11 */
 
     /// Protects the incoming pointer.
     TAO_SYNCH_MUTEX lock_;

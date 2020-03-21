@@ -8,7 +8,7 @@
  *  the different possible implementations of the Timer_Queue based
  *  bounded packet relay example.
  *
- *  @author Chris Gill           <cdgill@cs.wustl.edu>  and Douglas C. Schmidt   <schmidt@cs.wustl.edu> Based on the Timer Queue Test example written by Carlos O'Ryan        <coryan@cs.wustl.edu>  and Douglas C. Schmidt   <schmidt@cs.wustl.edu> and Sergio Flores-Gaitan <sergio@cs.wustl.edu>
+ *  @author Chris Gill           <cdgill@cs.wustl.edu>  and Douglas C. Schmidt   <d.schmidt@vanderbilt.edu> Based on the Timer Queue Test example written by Carlos O'Ryan        <coryan@cs.wustl.edu>  and Douglas C. Schmidt   <d.schmidt@vanderbilt.edu> and Sergio Flores-Gaitan <sergio@cs.wustl.edu>
  */
 //=============================================================================
 
@@ -65,8 +65,6 @@ public:
 
   /// Command entry point type definition.
   typedef int (Bounded_Packet_Relay::*ACTION) (void *);
-
-  // = Initialization method
 
   /// Constructor.
   Bounded_Packet_Relay (ACE_Thread_Manager *input_task_mgr,
@@ -185,7 +183,6 @@ private:
 class Input_Device_Wrapper_Base : public ACE_Task_Base
 {
 public:
-  // = Initialization and termination methods.
   /// Constructor.
   Input_Device_Wrapper_Base (ACE_Thread_Manager *input_task_mgr);
 

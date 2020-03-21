@@ -8,18 +8,15 @@
  *
  *  @author Prashant Jain <pjain@cs.wustl.edu>
  *  @author Detlef Becker <Detlef.Becker@med.siemens.de>
- *  @author and Douglas C. Schmidt <schmidt@cs.wustl.edu>
+ *  @author and Douglas C. Schmidt <d.schmidt@vanderbilt.edu>
  */
 //=============================================================================
-
 
 #include "test_config.h"
 #include "ace/Task.h"
 #include "ace/Reactor.h"
 #include "ace/Atomic_Op.h"
 #include "ace/Recursive_Thread_Mutex.h"
-
-
 
 #if defined (ACE_HAS_THREADS)
 
@@ -35,7 +32,6 @@ static const int MAX_TASKS = 20;
 class Test_Task : public ACE_Task<ACE_MT_SYNCH>
 {
 public:
-  // = Initialization and termination methods.
   Test_Task (void);
   ~Test_Task (void);
 
@@ -62,9 +58,6 @@ private:
 int Test_Task::task_count_ = 0;
 
 static ACE_Atomic_Op<ACE_Thread_Mutex, int> done_count = MAX_TASKS * 2;
-
-
-
 static ACE_Recursive_Thread_Mutex recursive_lock;
 
 Test_Task::Test_Task (void)

@@ -22,8 +22,11 @@
 
 #include "tao/MProfile.h"
 #include "tao/ORB_Core_Auto_Ptr.h"
-
-#include "ace/Atomic_Op.h"
+#if defined (ACE_HAS_CPP11)
+# include <atomic>
+#else
+# include "ace/Atomic_Op.h"
+#endif /* ACE_HAS_CPP11 */
 
 #if defined (HPUX) && defined (IOR)
    /* HP-UX 11.11 defines IOR in /usr/include/pa/inline.h
@@ -381,7 +384,11 @@ protected:
   CORBA::Boolean profile_success_;
 
   /// Reference counter.
+#if defined (ACE_HAS_CPP11)
+  std::atomic<uint32_t> refcount_;
+#else
   ACE_Atomic_Op<TAO_SYNCH_MUTEX, unsigned long> refcount_;
+#endif /* ACE_HAS_CPP11 */
 
   /// The policy overrides in this object, if nil then use the default
   /// policies.
@@ -412,7 +419,6 @@ protected:
   /// True if forwarding request upon some specific exceptions
   /// (e.g. OBJECT_NOT_EXIST) already happened.
   ACE_Atomic_Op<TAO_SYNCH_MUTEX, bool> forwarded_on_exception_;
-
 };
 
 // Define a TAO_Stub auto_ptr class.
@@ -425,7 +431,6 @@ protected:
 class TAO_Export TAO_Stub_Auto_Ptr
 {
 public:
-  // = Initialization and termination methods.
   explicit TAO_Stub_Auto_Ptr (TAO_Stub *p = 0);
   TAO_Stub_Auto_Ptr (TAO_Stub_Auto_Ptr &ap);
   TAO_Stub_Auto_Ptr &operator= (TAO_Stub_Auto_Ptr &rhs);

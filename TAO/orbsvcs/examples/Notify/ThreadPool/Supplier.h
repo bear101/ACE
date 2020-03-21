@@ -26,8 +26,6 @@ class TAO_Notify_ThreadPool_Supplier
   : public POA_CosNotifyComm::StructuredPushSupplier
 {
 public:
-  // = Initialization and Termination code
-
   /// Constructor.
   TAO_Notify_ThreadPool_Supplier (TAO_Notify_ORB_Objects& orb_objects);
 
@@ -60,8 +58,7 @@ protected:
   // = NotifySubscribe
   virtual void subscription_change (
         const CosNotification::EventTypeSeq & added,
-        const CosNotification::EventTypeSeq & removed
-      );
+        const CosNotification::EventTypeSeq & removed);
 
   // = StructuredPushSupplier method
   virtual void disconnect_structured_push_supplier (void);

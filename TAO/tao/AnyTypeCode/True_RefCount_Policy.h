@@ -25,7 +25,11 @@
 #include "tao/orbconf.h"
 
 #include "ace/Thread_Mutex.h"
-#include "ace/Atomic_Op.h"
+#if defined (ACE_HAS_CPP11)
+# include <atomic>
+#else
+# include "ace/Atomic_Op.h"
+#endif /* ACE_HAS_CPP11 */
 
 TAO_BEGIN_VERSIONED_NAMESPACE_DECL
 
@@ -82,7 +86,6 @@ namespace TAO
     void remove_ref (void);
 
   protected:
-
     /// Constructor.
     /**
      * @note This constructor is protected since it not meant to be
@@ -101,7 +104,11 @@ namespace TAO
 
   private:
     /// Reference counter.
+#if defined (ACE_HAS_CPP11)
+    std::atomic<uint32_t> refcount_;
+#else
     ACE_Atomic_Op<TAO_SYNCH_MUTEX, unsigned long> refcount_;
+#endif /* ACE_HAS_CPP11 */
   };
 
 }  // End namespace TAO

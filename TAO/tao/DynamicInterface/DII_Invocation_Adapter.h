@@ -93,10 +93,9 @@ namespace TAO
     virtual ~DII_Invocation_Adapter (void);
 
     /// Invoke the target
-    virtual void invoke (TAO::Exception_Data *ex, unsigned long ex_count);
+    virtual void invoke (const TAO::Exception_Data *ex, unsigned long ex_count);
 
   protected:
-
     virtual Invocation_Status invoke_twoway (
         TAO_Operation_Details &op,
         CORBA::Object_var &effective_target,
@@ -111,14 +110,12 @@ namespace TAO
         Collocation_Strategy strat);
 
   private:
-
     CORBA::ExceptionList *exception_list_;
 
     CORBA::Request *request_;
 
     TAO::Exception_Data *ex_data_;
   private:
-
     /// Dont allow default initializations
     DII_Invocation_Adapter (void);
 
@@ -147,7 +144,7 @@ namespace TAO
         TAO::Invocation_Mode mode = TAO_DII_DEFERRED_INVOCATION);
 
     /// Invoke the target
-    virtual void invoke (TAO::Exception_Data *ex, unsigned long ex_count);
+    virtual void invoke (const TAO::Exception_Data *ex, unsigned long ex_count);
 
   protected:
     virtual Invocation_Status invoke_twoway (

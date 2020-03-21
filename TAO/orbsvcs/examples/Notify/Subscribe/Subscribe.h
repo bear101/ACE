@@ -29,9 +29,7 @@ class Subscribe_StructuredPushSupplier;
  */
 class Subscribe
 {
-
- public:
-  // = Initialization and Termination
+public:
   Subscribe (void);
   ~Subscribe ();
 
@@ -123,9 +121,7 @@ class Subscribe_StructuredPushConsumer
   // = DESCRIPTION
   //   Consumer for the Subscribe example.
   //
-
- public:
-  // = Initialization and Termination code
+public:
   /// Constructor.
   Subscribe_StructuredPushConsumer (Subscribe* subscribe);
 
@@ -159,16 +155,13 @@ protected:
   // = NotifyPublish method
     virtual void offer_change (
         const CosNotification::EventTypeSeq & added,
-        const CosNotification::EventTypeSeq & removed
-      );
+        const CosNotification::EventTypeSeq & removed);
 
   // = StructuredPushSupplier methods
   virtual void push_structured_event (
-        const CosNotification::StructuredEvent & notification
-      );
+        const CosNotification::StructuredEvent & notification);
 
-  virtual void disconnect_structured_push_consumer (
-        );
+  virtual void disconnect_structured_push_consumer ();
 };
 
 /*****************************************************************/
@@ -182,8 +175,7 @@ class Subscribe_StructuredPushSupplier
   // = DESCRIPTION
   //   Supplier for the SUBSCRIBE example.
   //
- public:
-  // = Initialization and Termination code
+public:
   /// Constructor.
   Subscribe_StructuredPushSupplier (void);
 
@@ -212,12 +204,10 @@ protected:
   // = NotifySubscribe
   virtual void subscription_change (
         const CosNotification::EventTypeSeq & added,
-        const CosNotification::EventTypeSeq & removed
-      );
+        const CosNotification::EventTypeSeq & removed);
 
   // = StructuredPushSupplier method
-    virtual void disconnect_structured_push_supplier (
-      );
+  virtual void disconnect_structured_push_supplier ();
 };
 
 #endif /* NOTIFY_SUBSCRIBE_CLIENT_H */

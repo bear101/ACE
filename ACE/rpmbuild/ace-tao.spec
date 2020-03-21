@@ -1,6 +1,6 @@
 # Set the version number here.
-%define ACEVER  6.4.5
-%define TAOVER  2.4.5
+%define ACEVER  6.5.8
+%define TAOVER  2.5.8
 
 # Conditional build
 # Default values are
@@ -72,7 +72,7 @@ Release:      1%{?OPTTAG}%{?dist}
 
 Group:        Development/Libraries/C and C++
 URL:          http://www.dre.vanderbilt.edu/~schmidt/ACE.html
-License:      DOC License
+License:      DOC
 %if 0%{?_with_tao:1}%{?_without_tao:0}
 Source0:      http://download.dre.vanderbilt.edu/previous_versions/ACE+TAO-src-%{ACEVER}.tar.gz
 %else
@@ -83,7 +83,7 @@ BuildRoot:    %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 %define _extension .gz
 
-%if 0%{?fedora} || 0%{?rhel_version} || 0%{?centos_version}
+%if 0%{?fedora} || 0%{?rhel}
 BuildRequires: redhat-rpm-config elfutils sendmail
 %endif
 
@@ -112,7 +112,7 @@ BuildRequires:  zlib-devel
 BuildRequires:  bzip2
 %endif
 
-BuildRequires:  perl
+BuildRequires:  perl perl(Data::Dumper)
 
 %if %{?_with_fltk:1}%{!?_with_fltk:0}
 BuildRequires:  fltk-devel
@@ -1132,6 +1132,8 @@ echo ace/QtReactor/QtReactor.h >> allhdrs.list
 echo TAO/tao/QtResource/QtResource_Factory.h >> allhdrs.list
 echo TAO/tao/QtResource/QtResource_Loader.h >> allhdrs.list
 echo TAO/tao/PortableServer/get_arg.h >> allhdrs.list
+echo TAO/orbsvcs/orbsvcs/ESF/ESF_Proxy_List.{h,inl,cpp} >> allhdrs.list
+echo TAO/orbsvcs/orbsvcs/ESF/ESF_Proxy_RB_Tree.{h,inl,cpp} >> allhdrs.list
 %endif
 
 # Install headers and create header lists
@@ -1945,13 +1947,11 @@ fi
 %{_libdir}/libACE_Compression.so.%{ACEVERSO}
 %{_libdir}/libACE_RLECompression.so.%{ACEVERSO}
 
-%doc ACE-INSTALL.html
 %doc AUTHORS
 %doc COPYING
 %doc PROBLEM-REPORT-FORM
 %doc README
-%doc THANKS
-%doc VERSION
+%doc VERSION.txt
 
 # ---------------- ace-devel ----------------
 
@@ -1988,11 +1988,12 @@ fi
 %endif
 %exclude %{_libdir}/libACEXML*.so
 
+%doc ACE-INSTALL.html
 %doc AUTHORS
 %doc COPYING
 %doc PROBLEM-REPORT-FORM
 %doc README
-%doc VERSION
+%doc VERSION.txt
 
 # ---------------- ace-xml ----------------
 
@@ -2004,7 +2005,7 @@ fi
 %doc COPYING
 %doc PROBLEM-REPORT-FORM
 %doc README
-%doc VERSION
+%doc VERSION.txt
 
 # ---------------- ace-gperf ----------------
 
@@ -2018,7 +2019,7 @@ fi
 %doc COPYING
 %doc PROBLEM-REPORT-FORM
 %doc README
-%doc VERSION
+%doc VERSION.txt
 
 # ---------------- ace-xml-devel ----------------
 
@@ -2035,7 +2036,7 @@ fi
 %doc COPYING
 %doc PROBLEM-REPORT-FORM
 %doc README
-%doc VERSION
+%doc VERSION.txt
 
 # ---------------- ace-kokyu ----------------
 
@@ -2047,7 +2048,7 @@ fi
 %doc COPYING
 %doc PROBLEM-REPORT-FORM
 %doc README
-%doc VERSION
+%doc VERSION.txt
 
 # ---------------- ace-kokyu-devel ----------------
 
@@ -2059,7 +2060,7 @@ fi
 %doc COPYING
 %doc PROBLEM-REPORT-FORM
 %doc README
-%doc VERSION
+%doc VERSION.txt
 
 # ---------------- ace-foxreactor ----------------
 
@@ -2073,7 +2074,7 @@ fi
 %doc COPYING
 %doc PROBLEM-REPORT-FORM
 %doc README
-%doc VERSION
+%doc VERSION.txt
 
 %endif
 %endif
@@ -2089,7 +2090,7 @@ fi
 %doc COPYING
 %doc PROBLEM-REPORT-FORM
 %doc README
-%doc VERSION
+%doc VERSION.txt
 
 %endif
 
@@ -2108,7 +2109,7 @@ fi
 %doc COPYING
 %doc PROBLEM-REPORT-FORM
 %doc README
-%doc VERSION
+%doc VERSION.txt
 
 %endif
 
@@ -2124,7 +2125,7 @@ fi
 %doc COPYING
 %doc PROBLEM-REPORT-FORM
 %doc README
-%doc VERSION
+%doc VERSION.txt
 
 %endif
 
@@ -2143,7 +2144,7 @@ fi
 %doc COPYING
 %doc PROBLEM-REPORT-FORM
 %doc README
-%doc VERSION
+%doc VERSION.txt
 
 %endif
 
@@ -2159,7 +2160,7 @@ fi
 %doc COPYING
 %doc PROBLEM-REPORT-FORM
 %doc README
-%doc VERSION
+%doc VERSION.txt
 
 %endif
 
@@ -2178,7 +2179,7 @@ fi
 %doc COPYING
 %doc PROBLEM-REPORT-FORM
 %doc README
-%doc VERSION
+%doc VERSION.txt
 
 %endif
 
@@ -2194,7 +2195,7 @@ fi
 %doc COPYING
 %doc PROBLEM-REPORT-FORM
 %doc README
-%doc VERSION
+%doc VERSION.txt
 
 %endif
 
@@ -2213,7 +2214,7 @@ fi
 %doc COPYING
 %doc PROBLEM-REPORT-FORM
 %doc README
-%doc VERSION
+%doc VERSION.txt
 
 %endif
 
@@ -2259,7 +2260,7 @@ fi
 %doc TAO/COPYING
 %doc TAO/PROBLEM-REPORT-FORM
 %doc TAO/TAO-INSTALL.html
-%doc TAO/VERSION
+%doc TAO/VERSION.txt
 %doc TAO/README
 
 # ---------------- tao-devel ----------------
@@ -2311,7 +2312,7 @@ fi
 
 %doc TAO/COPYING
 %doc TAO/PROBLEM-REPORT-FORM
-%doc TAO/VERSION
+%doc TAO/VERSION.txt
 %doc TAO/README
 
 # ---------------- tao-utils ----------------
@@ -2326,7 +2327,7 @@ fi
 
 %doc TAO/COPYING
 %doc TAO/PROBLEM-REPORT-FORM
-%doc TAO/VERSION
+%doc TAO/VERSION.txt
 %doc TAO/README
 %doc TAO/utils/catior/README.catior
 %doc TAO/utils/nslist/README.nslist
@@ -2358,7 +2359,7 @@ fi
 
 %doc TAO/COPYING
 %doc TAO/PROBLEM-REPORT-FORM
-%doc TAO/VERSION
+%doc TAO/VERSION.txt
 %doc TAO/README
 
 # ---------------- tao-cosevent ----------------
@@ -2385,7 +2386,7 @@ fi
 
 %doc TAO/COPYING
 %doc TAO/PROBLEM-REPORT-FORM
-%doc TAO/VERSION
+%doc TAO/VERSION.txt
 %doc TAO/README
 
 # ---------------- tao-cosnotification ----------------
@@ -2412,7 +2413,7 @@ fi
 
 %doc TAO/COPYING
 %doc TAO/PROBLEM-REPORT-FORM
-%doc TAO/VERSION
+%doc TAO/VERSION.txt
 %doc TAO/README
 
 # ---------------- tao-costrading ----------------
@@ -2440,7 +2441,7 @@ fi
 
 %doc TAO/COPYING
 %doc TAO/PROBLEM-REPORT-FORM
-%doc TAO/VERSION
+%doc TAO/VERSION.txt
 %doc TAO/README
 
 # ---------------- tao-rtevent ----------------
@@ -2467,7 +2468,7 @@ fi
 
 %doc TAO/COPYING
 %doc TAO/PROBLEM-REPORT-FORM
-%doc TAO/VERSION
+%doc TAO/VERSION.txt
 %doc TAO/README
 
 # ---------------- tao-cosconcurrency ----------------
@@ -2494,7 +2495,7 @@ fi
 
 %doc TAO/COPYING
 %doc TAO/PROBLEM-REPORT-FORM
-%doc TAO/VERSION
+%doc TAO/VERSION.txt
 %doc TAO/README
 
 # ---------------- tao-flresource ----------------
@@ -2507,7 +2508,7 @@ fi
 
 %doc TAO/COPYING
 %doc TAO/PROBLEM-REPORT-FORM
-%doc TAO/VERSION
+%doc TAO/VERSION.txt
 %doc TAO/README
 
 %endif
@@ -2526,7 +2527,7 @@ fi
 
 %doc TAO/COPYING
 %doc TAO/PROBLEM-REPORT-FORM
-%doc TAO/VERSION
+%doc TAO/VERSION.txt
 %doc TAO/README
 
 %endif
@@ -2541,7 +2542,7 @@ fi
 
 %doc TAO/COPYING
 %doc TAO/PROBLEM-REPORT-FORM
-%doc TAO/VERSION
+%doc TAO/VERSION.txt
 %doc TAO/README
 
 %endif
@@ -2560,7 +2561,7 @@ fi
 
 %doc TAO/COPYING
 %doc TAO/PROBLEM-REPORT-FORM
-%doc TAO/VERSION
+%doc TAO/VERSION.txt
 %doc TAO/README
 
 %endif
@@ -2575,7 +2576,7 @@ fi
 
 %doc TAO/COPYING
 %doc TAO/PROBLEM-REPORT-FORM
-%doc TAO/VERSION
+%doc TAO/VERSION.txt
 %doc TAO/README
 
 %endif
@@ -2594,7 +2595,7 @@ fi
 
 %doc TAO/COPYING
 %doc TAO/PROBLEM-REPORT-FORM
-%doc TAO/VERSION
+%doc TAO/VERSION.txt
 %doc TAO/README
 
 %endif
@@ -2609,7 +2610,7 @@ fi
 
 %doc TAO/COPYING
 %doc TAO/PROBLEM-REPORT-FORM
-%doc TAO/VERSION
+%doc TAO/VERSION.txt
 %doc TAO/README
 
 %endif
@@ -2628,7 +2629,7 @@ fi
 
 %doc TAO/COPYING
 %doc TAO/PROBLEM-REPORT-FORM
-%doc TAO/VERSION
+%doc TAO/VERSION.txt
 %doc TAO/README
 
 %endif

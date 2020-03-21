@@ -8,7 +8,7 @@
  *
  *  @author Nagarajan Surendran (naga@cs.wustl.edu)
  *  @author Matt Braun <mjb2@cs.wustl.edu>
- *  @author and Douglas C. Schmidt <schmidt@cs.wustl.edu>.
+ *  @author and Douglas C. Schmidt <d.schmidt@vanderbilt.edu>.
  */
 //=============================================================================
 
@@ -38,8 +38,6 @@ TAO_BEGIN_VERSIONED_NAMESPACE_DECL
 class TAO_Naming_Export TAO_Naming_Client
 {
 public:
-  // = Initialization and termination methods.
-
   /// Default constructor.
   TAO_Naming_Client (void);
 

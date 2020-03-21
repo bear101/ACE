@@ -36,9 +36,7 @@ class Filter_StructuredPushSupplier;
  */
 class FilterClient
 {
-
  public:
-  // = Initialization and Termination
   /// Constructor
   FilterClient (void);
 
@@ -166,9 +164,7 @@ class FilterClient
  */
 class Filter_StructuredPushConsumer : public POA_CosNotifyComm::StructuredPushConsumer
 {
-
- public:
-  // = Initialization and Termination code
+public:
   /// Constructor.
   Filter_StructuredPushConsumer (FilterClient* filter, const char *my_name);
 
@@ -201,13 +197,11 @@ protected:
   // = NotifyPublish method
     virtual void offer_change (
         const CosNotification::EventTypeSeq & added,
-        const CosNotification::EventTypeSeq & removed
-                               );
+        const CosNotification::EventTypeSeq & removed);
 
   // = StructuredPushSupplier methods
   virtual void push_structured_event (
-        const CosNotification::StructuredEvent & notification
-                                      );
+        const CosNotification::StructuredEvent & notification);
 
   virtual void disconnect_structured_push_consumer ();
 };
@@ -223,8 +217,7 @@ protected:
   */
 class Filter_StructuredPushSupplier : public POA_CosNotifyComm::StructuredPushSupplier
 {
- public:
-  // = Initialization and Termination code
+public:
   /// Constructor.
   Filter_StructuredPushSupplier (const char* my_name);
 

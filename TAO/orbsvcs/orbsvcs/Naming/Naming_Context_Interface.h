@@ -45,8 +45,6 @@ class TAO_Naming_Serv_Export TAO_Naming_Context :
   public virtual POA_CosNaming::NamingContextExt
 {
 public:
-
-  // = Initialization and termination methods.
   /// Constructor.  Initializes <impl_> with a concrete implementation.
   TAO_Naming_Context (TAO_Naming_Context_Impl *impl);
 
@@ -129,7 +127,7 @@ public:
    * Delete the naming context.  The user should take care to <unbind> any
    * bindings in which the given context is bound to some names, to
    * avoid dangling references when invoking <destroy> operation.
-   * NOTE: <destory> is a no-op on the root context.
+   * NOTE: <destroy> is a no-op on the root context.
    * NOTE: after <destroy> is invoked on a Naming Context, all
    * BindingIterators associated with that Naming Context are also destroyed.
    */
@@ -185,7 +183,6 @@ public:
   virtual PortableServer::POA_ptr _default_POA (void);
 
 private:
-
   enum Hint
     {
       HINT_ID,
@@ -325,7 +322,7 @@ public:
    * Delete the naming context.  The user should take care to <unbind> any
    * bindings in which the given context is bound to some names, to
    * avoid dangling references when invoking <destroy> operation.
-   * NOTE: <destory> is a no-op on the root context.
+   * NOTE: <destroy> is a no-op on the root context.
    * NOTE: after <destroy> is invoked on a Naming Context, all
    * BindingIterators associated with that Naming Context are also destroyed.
    */
@@ -354,7 +351,6 @@ public:
    * persistence support.
    */
   virtual bool stale (void);
-
 };
 
 TAO_END_VERSIONED_NAMESPACE_DECL

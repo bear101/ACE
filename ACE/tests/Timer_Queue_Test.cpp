@@ -10,7 +10,7 @@
  *    functionality of the timer queue is then tested. No command
  *    line arguments are needed to run the test.
  *
- *  @author Douglas C. Schmidt <schmidt@cs.wustl.edu>
+ *  @author Douglas C. Schmidt <d.schmidt@vanderbilt.edu>
  *  @author Prashant Jain <pjain@cs.wustl.edu>
  *  @author and Darrell Brunsch <brunsch@cs.wustl.edu>
  */
@@ -586,7 +586,6 @@ test_unique_timer_heap_ids (void)
 class Timer_Queue_Stack
 {
 public:
-  // = Initialization method
   Timer_Queue_Stack (ACE_Timer_Queue *queue,
     const ACE_TCHAR *name,
     Timer_Queue_Stack *next = 0)

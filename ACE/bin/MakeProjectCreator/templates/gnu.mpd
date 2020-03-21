@@ -530,6 +530,7 @@ endif
 #       Local targets
 #----------------------------------------------------------------------------
 <%marker(local)%>
+.PHONY: lib_warning
 lib_warning:
 	@echo <%project_name%> will not be built due to the following missing library: $(LIBCHECK) >&2
 
@@ -539,6 +540,7 @@ ifneq ($(<%require%>),1)
 requires_disabled_macros += <%require%>
 endif
 <%endfor%>
+.PHONY: require_warning
 require_warning:
 	@echo <%project_name%> will not be built due to the following disabled make macros: $(requires_disabled_macros)>&2
 
@@ -549,6 +551,7 @@ ifeq ($(<%avoid%>),1)
 avoids_enabled_macros += <%avoid%>
 endif
 <%endfor%>
+.PHONY: avoid_warning
 avoid_warning:
 	@echo <%project_name%> will not be built due to the following enabled make macros: $(avoids_enabled_macros)>&2
 
@@ -566,11 +569,11 @@ endif
 SPACE = $(should_be_unset) $(should_be_unset)
 <%foreach(custom_types)%>
 <%if(custom_type->libpath)%>
-DYLD_LIBRARY_PATH := $(DYLD_LIBRARY_PATH):<%custom_type->libpath%>$(if $(ARCH),:<%custom_type->libpath%>/$(ARCH))
-LD_LIBRARY_PATH   := $(LD_LIBRARY_PATH):<%custom_type->libpath%>$(if $(ARCH),:<%custom_type->libpath%>/$(ARCH))
-SHLIB_PATH        := $(SHLIB_PATH):<%custom_type->libpath%>$(if $(ARCH),:<%custom_type->libpath%>/$(ARCH))
-LIBPATH           := $(LIBPATH):<%custom_type->libpath%>$(if $(ARCH),:<%custom_type->libpath%>/$(ARCH))
-PATH              := $(PATH):<%custom_type->libpath%>$(if $(ARCH),:<%custom_type->libpath%>/$(ARCH))
+export DYLD_LIBRARY_PATH := $(DYLD_LIBRARY_PATH):<%custom_type->libpath%>$(if $(ARCH),:<%custom_type->libpath%>/$(ARCH))
+export LD_LIBRARY_PATH   := $(LD_LIBRARY_PATH):<%custom_type->libpath%>$(if $(ARCH),:<%custom_type->libpath%>/$(ARCH))
+export SHLIB_PATH        := $(SHLIB_PATH):<%custom_type->libpath%>$(if $(ARCH),:<%custom_type->libpath%>/$(ARCH))
+export LIBPATH           := $(LIBPATH):<%custom_type->libpath%>$(if $(ARCH),:<%custom_type->libpath%>/$(ARCH))
+export PATH              := $(PATH):<%custom_type->libpath%>$(if $(ARCH),:<%custom_type->libpath%>/$(ARCH))
 
 <%endif%>
 <%foreach(custom_type->input_files)%>
@@ -679,7 +682,7 @@ endif
 
 <%endif%>
 <%if(idl_files)%>
-ADDITIONAL_IDL_TARGETS +=<%foreach(idl_files)%> <%if(flag_overrides(idl_file, gendir))%><%if(!compares(flag_overrides(idl_file, gendir),.))%><%flag_overrides(idl_file, gendir)%>/<%endif%><%basenoextension(idl_file)%>$(IDL_CLIENT_HDR_EXT)<%else%><%noextension(idl_file)%>$(IDL_CLIENT_HDR_EXT)<%endif%><%endfor%>
+ADDITIONAL_IDL_TARGETS += $(GENERATED_DIRTY)
 idl_stubs: $(ADDITIONAL_IDL_TARGETS)
 <%if(source_files)%>
 
@@ -767,10 +770,21 @@ endif
 all: __postbuild__
 
 <%if(exename)%>
-__postbuild__: $(VBIN)
+__postbuild__: $(VBIN) $(INSTALL)
 <%else%>
 <%if(sharedname || staticname)%>
-__postbuild__: $(VLIBS)
+__postbuild__: $(VLIBS) $(INSTALL)
+<%else%>
+<%foreach(requires)%>
+ifeq ($(<%require%>),1)
+<%endfor%>
+<%foreach(avoids)%>
+ifneq ($(<%avoid%>),1)
+<%endfor%>
+__postbuild__: $(GENERATED_DIRTY)
+<%foreach(avoids requires)%>
+endif
+<%endfor%>
 <%endif%>
 <%endif%>
 
@@ -793,16 +807,8 @@ install: <%if(postbuild)%>__postbuild__<%else%>all<%endif%>
 INSTALL_LIB ?= lib
 ifneq ($(INSTALL_PREFIX),)
 ifneq ($(install_rpath),0)
-UNAME := $(shell uname)
-ifeq ($(UNAME), HP-UX)
-LDFLAGS += -Wl,+s,+b,$(INSTALL_PREFIX)/$(INSTALL_LIB) $(LD_RPATH_FLAGS)
-else
-ifeq ($(UNAME), Darwin)
-LDFLAGS += -Wl,-rpath $(INSTALL_PREFIX)/$(INSTALL_LIB) $(LD_RPATH_FLAGS)
-else
-LDFLAGS += -Wl,-R$(INSTALL_PREFIX)/$(INSTALL_LIB) $(LD_RPATH_FLAGS)
-endif
-endif
+LD_RPATH ?= -Wl,-rpath,
+LDFLAGS += $(LD_RPATH)$(INSTALL_PREFIX)/$(INSTALL_LIB) $(LD_RPATH_FLAGS)
 endif
 endif
 

@@ -24,9 +24,7 @@
 class TAO_Notify_Lanes_Supplier
   : public POA_CosNotifyComm::StructuredPushSupplier
 {
- public:
-  // = Initialization and Termination code
-
+public:
   /// Constructor.
   TAO_Notify_Lanes_Supplier (TAO_Notify_ORB_Objects& orb_objects);
 
@@ -58,8 +56,7 @@ protected:
   // = NotifySubscribe
   virtual void subscription_change (
         const CosNotification::EventTypeSeq & added,
-        const CosNotification::EventTypeSeq & removed
-      );
+        const CosNotification::EventTypeSeq & removed);
 
   // = StructuredPushSupplier method
   virtual void disconnect_structured_push_supplier (void);

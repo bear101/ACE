@@ -8,7 +8,7 @@
  *
  *  @author   Sergio Flores-Gaitan <sergio@cs.wustl.edu>
  *  @author   Marina Spivak <marina@cs.wustl.edu>
- *  @author and   Douglas C. Schmidt <schmidt@cs.wustl.edu>
+ *  @author and   Douglas C. Schmidt <d.schmidt@vanderbilt.edu>
  */
 //=============================================================================
 
@@ -16,8 +16,6 @@
 #include "client.h"
 #include "tao/debug.h"
 #include "ace/Get_Opt.h"
-
-
 
 #if defined (_MSC_VER)
 # pragma warning (disable : 4250)
@@ -27,7 +25,6 @@ class My_Test_Object :
   public virtual POA_Test_Object
 {
 public:
-  // = Initialization and termination methods.
   /// Constructor.
   My_Test_Object (CORBA::Short id = 0);
 

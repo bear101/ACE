@@ -6,7 +6,7 @@
  *
  *  This class implements the interface calls for RMI.
  *
- *  @author Douglas C. Schmidt <schmidt@cs.wustl.edu>
+ *  @author Douglas C. Schmidt <d.schmidt@vanderbilt.edu>
  */
 //=============================================================================
 
@@ -28,7 +28,6 @@
 class Time_Date_Client_i
 {
 public:
-  // = Initialization and termination methods.
   /// Constructor
   Time_Date_Client_i (void);
 

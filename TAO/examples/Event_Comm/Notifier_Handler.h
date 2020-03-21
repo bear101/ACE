@@ -4,7 +4,7 @@
 /**
  *  @file    Notifier_Handler.h
  *
- *  @author Douglas C. Schmidt (schmidt@cs.wustl.edu) and Pradeep Gore (pradeep@cs.wustl.edu)
+ *  @author Douglas C. Schmidt (d.schmidt@vanderbilt.edu) and Pradeep Gore (pradeep@cs.wustl.edu)
  */
 //=============================================================================
 
@@ -30,7 +30,6 @@
 class Notifier_Handler
 {
 public:
-  // = Initialization and termination methods.
   /// This constructor gets the notifier object from the Naming
   /// Service.
   Notifier_Handler (void);

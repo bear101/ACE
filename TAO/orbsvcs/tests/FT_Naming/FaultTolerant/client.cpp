@@ -34,7 +34,6 @@ class My_Test_Object :
   public virtual POA_Test_Object
 {
 public:
-  // = Initialization and termination methods.
   My_Test_Object (CORBA::Short id = 0);
   // Constructor.
 
@@ -656,11 +655,11 @@ do_failover_name_test (
         CosNaming::NamingContext_var nc =
           CosNaming::NamingContext::_narrow (obj1_on_replica.in ());
       }
-      catch (const CosNaming::NamingContext::NotFound& ex)
+      catch (const CosNaming::NamingContext::NotFound&)
         {
-          ex._tao_print_exception (
+          ACE_DEBUG ((LM_DEBUG,
               ACE_TEXT ("INFO: Unable to resolve wide context object from ")
-              ACE_TEXT ("replica. Sleeping for a second.\n"));
+              ACE_TEXT ("replica. Sleeping for a second.\n")));
 
           ACE_OS::sleep (1);
 
@@ -1291,11 +1290,11 @@ do_persistence_name_test (
         CosNaming::NamingContext_var nc =
           CosNaming::NamingContext::_narrow (obj1_on_replica.in ());
       }
-      catch (const CosNaming::NamingContext::NotFound& ex)
+      catch (const CosNaming::NamingContext::NotFound&)
         {
-          ex._tao_print_exception (
+          ACE_DEBUG ((LM_DEBUG,
               ACE_TEXT ("INFO: Unable to resolve wide context object from ")
-              ACE_TEXT ("repository. Sleeping for a second.\n"));
+              ACE_TEXT ("repository. Sleeping for a second.\n")));
 
           ACE_OS::sleep (1);
 
@@ -1876,11 +1875,11 @@ do_equivalence_name_test (
         CosNaming::NamingContext_var nc =
           CosNaming::NamingContext::_narrow (obj1_on_replica.in ());
       }
-      catch (const CosNaming::NamingContext::NotFound& ex)
+      catch (const CosNaming::NamingContext::NotFound&)
         {
-          ex._tao_print_exception (
+          ACE_DEBUG ((LM_DEBUG,
               ACE_TEXT ("INFO: Unable to resolve wide context object from ")
-              ACE_TEXT ("replica. Sleeping for a second.\n"));
+              ACE_TEXT ("replica. Sleeping for a second.\n")));
 
           ACE_OS::sleep (1);
 

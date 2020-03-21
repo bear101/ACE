@@ -17,7 +17,7 @@
  has been solved in a more recent version of TAO.
 
  To subscribe to the list see
-  http://www.dre.vanderbilt.edu/~schmidt/ACE-mail.html
+  https://www.dre.vanderbilt.edu/~schmidt/ACE-mail.html
 
  Replace/remove all the explanatory text in brackets before mailing.
 
@@ -40,8 +40,8 @@
 To: tao-bugs@list.isis.vanderbilt.edu
 Subject: [area]: [synopsis]
 
-    TAO VERSION: 2.4.5
-    ACE VERSION: 6.4.5
+    TAO VERSION: 2.5.8
+    ACE VERSION: 6.5.8
 
     HOST MACHINE and OPERATING SYSTEM:
         If on Windows based OS's, which version of WINSOCK do you

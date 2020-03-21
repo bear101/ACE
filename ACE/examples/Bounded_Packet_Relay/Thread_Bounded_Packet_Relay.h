@@ -7,7 +7,7 @@
  *  This code provides a thread based implementation
  *  of the bounded packet relay example.
  *
- *  @author Chris Gill           <cdgill@cs.wustl.edu>  and Douglas C. Schmidt   <schmidt@cs.wustl.edu> Based on the Timer Queue Test example written by Carlos O'Ryan        <coryan@cs.wustl.edu>  and Douglas C. Schmidt   <schmidt@cs.wustl.edu> and Sergio Flores-Gaitan <sergio@cs.wustl.edu>
+ *  @author Chris Gill           <cdgill@cs.wustl.edu>  and Douglas C. Schmidt   <d.schmidt@vanderbilt.edu> Based on the Timer Queue Test example written by Carlos O'Ryan        <coryan@cs.wustl.edu>  and Douglas C. Schmidt   <d.schmidt@vanderbilt.edu> and Sergio Flores-Gaitan <sergio@cs.wustl.edu>
  */
 //=============================================================================
 
@@ -70,7 +70,6 @@ public:
   enum Logging_Flags {NO_LOGGING = 0,
                       LOG_MSGS_CREATED = 1};
 
-  // = Initialization and termination methods.
   /// Constructor.
   Text_Input_Device_Wrapper (ACE_Thread_Manager *input_task_mgr,
                              size_t read_length,
@@ -374,12 +373,8 @@ private:
 class Thread_Bounded_Packet_Relay_Driver : public Bounded_Packet_Relay_Driver <Thread_Timer_Queue>
 {
 public:
-
   // = Trait for commands issued from this driver
-
   typedef ACE_Command_Callback<User_Input_Task, User_Input_Task::ACTION> MYCOMMAND;
-
-  // = Initialization and termination methods.
 
   /// Constructor.
   Thread_Bounded_Packet_Relay_Driver (Bounded_Packet_Relay *relay);

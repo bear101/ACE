@@ -133,7 +133,6 @@ public:
       TAO_LAZY
     };
 
-  // = Initialization and termination methods.
   TAO_Resource_Factory (void);
   virtual ~TAO_Resource_Factory (void);
 
@@ -236,7 +235,7 @@ public:
   virtual TAO_LF_Strategy *create_lf_strategy (void) = 0;
 
   /// Outgoing fragment creation strategy.
-  virtual auto_ptr<TAO_GIOP_Fragmentation_Strategy>
+  virtual TAO_GIOP_Fragmentation_Strategy*
     create_fragmentation_strategy (TAO_Transport * transport,
                                    CORBA::ULong max_message_size) const = 0;
 

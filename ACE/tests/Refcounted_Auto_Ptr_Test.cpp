@@ -5,12 +5,11 @@
  *  This example tests the <ACE_Refcounted_Auto_Ptr> and illustrates
  *  how they may be dispersed between multiple threads using an
  *  implementation of the Active Object pattern, which is available
- *  at <http://www.cs.wustl.edu/~schmidt/PDF/Act-Obj.pdf>.
+ *  at <http://www.dre.vanderbilt.edu/~schmidt/PDF/Act-Obj.pdf>.
  *
  *  @author Johnny Tucker <johnny_tucker@yahoo.com>
  */
 //=============================================================================
-
 
 #include "test_config.h"
 #include "ace/ACE.h"
@@ -68,11 +67,9 @@ typedef ACE_Refcounted_Auto_Ptr<Printer, ACE_Thread_Mutex> Printer_var;
  */
 class Scheduler : public ACE_Task<ACE_SYNCH>
 {
-
   friend class Method_Request_print;
   friend class Method_Request_end;
 public:
-  // = Initialization and termination methods.
   /// Constructor.
   Scheduler (Scheduler * = 0);
 

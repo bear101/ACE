@@ -72,7 +72,6 @@ class Filter_StructuredPushSupplier
   //   Supplier for the filter example.
   //
  public:
-  // = Initialization and Termination code
   Filter_StructuredPushSupplier (void);
   // Constructor.
 
@@ -101,12 +100,10 @@ protected:
   // = NotifySubscribe
   virtual void subscription_change (
         const CosNotification::EventTypeSeq & added,
-        const CosNotification::EventTypeSeq & removed
-      );
+        const CosNotification::EventTypeSeq & removed);
 
   // = StructuredPushSupplier method
-    virtual void disconnect_structured_push_supplier (
-      );
+  virtual void disconnect_structured_push_supplier ();
 };
 
 

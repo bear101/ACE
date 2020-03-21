@@ -56,6 +56,7 @@
 #include "Monitor_Size.h"
 #endif /* ACE_HAS_MONITOR_POINTS==1 */
 
+#include <string>
 
 ACE_BEGIN_VERSIONED_NAMESPACE_DECL
 
@@ -139,7 +140,7 @@ public:
 
   /// Build a CDR stream with an initial data block, it will *not* remove
   /// @a data_block, since it did not allocated it.  It's important to be
-  /// careful with the alignment of <data_block>.
+  /// careful with the alignment of @a data_block.
   /**
    * Create an output stream from an arbitrary data block, care must be
    * exercised with alignment, because this constructor will align if
@@ -221,6 +222,24 @@ public:
     ACE_CDR::ULong bound_;
     ACE_CDR::Boolean nocopy_;
   };
+
+  struct ACE_Export from_std_string
+  {
+    from_std_string (const std::string &s,
+                     ACE_CDR::ULong b);
+    const std::string &val_;
+    ACE_CDR::ULong bound_;
+  };
+
+#if !defined(ACE_LACKS_STD_WSTRING)
+  struct ACE_Export from_std_wstring
+  {
+    from_std_wstring (const std::wstring &ws,
+                      ACE_CDR::ULong b);
+    const std::wstring &val_;
+    ACE_CDR::ULong bound_;
+  };
+#endif
   //@}
 
   /**
@@ -250,6 +269,11 @@ public:
   ACE_CDR::Boolean write_wstring (const ACE_CDR::WChar *x);
   ACE_CDR::Boolean write_wstring (ACE_CDR::ULong length,
                                   const ACE_CDR::WChar *x);
+  ACE_CDR::Boolean write_string (const std::string &x);
+#if !defined(ACE_LACKS_STD_WSTRING)
+  ACE_CDR::Boolean write_wstring (const std::wstring &x);
+#endif
+
   //@}
 
   /// @note the portion written starts at @a x and ends
@@ -500,7 +524,6 @@ public:
 #endif /* ACE_HAS_MONITOR_POINTS==1 */
 
 private:
-
   // Find the message block in the chain of message blocks
   // that the provide location locates.
   ACE_Message_Block* find (char* loc);
@@ -794,6 +817,25 @@ public:
     const ACE_CDR::WChar *&val_;
     ACE_CDR::ULong bound_;
   };
+
+  /// Helper classes for extracting bounded strings into std::string/wstring.
+  struct ACE_Export to_std_string
+  {
+    to_std_string (std::string &s,
+                   ACE_CDR::ULong b);
+    std::string &val_;
+    ACE_CDR::ULong bound_;
+  };
+
+#if !defined(ACE_LACKS_STD_WSTRING)
+  struct ACE_Export to_std_wstring
+  {
+    to_std_wstring (std::wstring &ws,
+                    ACE_CDR::ULong b);
+    std::wstring &val_;
+    ACE_CDR::ULong bound_;
+  };
+#endif /* ACE_LACKS_STD_WSTRING */
   //@}
 
   /**
@@ -818,6 +860,10 @@ public:
   ACE_CDR::Boolean read_string (ACE_CDR::Char *&x);
   ACE_CDR::Boolean read_string (ACE_CString &x);
   ACE_CDR::Boolean read_wstring (ACE_CDR::WChar*& x);
+  ACE_CDR::Boolean read_string (std::string& x);
+#if !defined(ACE_LACKS_STD_WSTRING)
+  ACE_CDR::Boolean read_wstring (std::wstring& x);
+#endif
   //@}
 
   /**
@@ -1036,7 +1082,6 @@ protected:
 #endif /* ACE_HAS_MONITOR_POINTS==1 */
 
 private:
-
   ACE_CDR::Boolean read_1 (ACE_CDR::Octet *x);
   ACE_CDR::Boolean read_2 (ACE_CDR::UShort *x);
   ACE_CDR::Boolean read_4 (ACE_CDR::ULong *x);
@@ -1113,6 +1158,12 @@ public:
   /// the characters from the stream codeset to the native codeset
   virtual ACE_CDR::Boolean read_string (ACE_InputCDR&,
                                         ACE_CDR::Char *&) = 0;
+
+  /// Read a std::string from the stream, including the length, converting
+  /// the characters from the stream codeset to the native codeset
+  /// (provide non-optimized default implementation)
+  virtual ACE_CDR::Boolean read_string (ACE_InputCDR&,
+                                        std::string &);
 
   /// Read an array of characters from the stream, converting the
   /// characters from the stream codeset to the native codeset.
@@ -1210,6 +1261,13 @@ public:
                                        ACE_CDR::WChar&) = 0;
   virtual ACE_CDR::Boolean read_wstring (ACE_InputCDR&,
                                          ACE_CDR::WChar *&) = 0;
+#if !defined(ACE_LACKS_STD_WSTRING)
+  /// Read a std::wstring from the stream, including the length, converting
+  /// the characters from the stream codeset to the native codeset
+  /// (provide non-optimized default implementation)
+  virtual ACE_CDR::Boolean read_wstring (ACE_InputCDR&,
+                                         std::wstring &);
+#endif
   virtual ACE_CDR::Boolean read_wchar_array (ACE_InputCDR&,
                                              ACE_CDR::WChar*,
                                              ACE_CDR::ULong) = 0;
@@ -1344,6 +1402,16 @@ extern ACE_Export ACE_CDR::Boolean operator<< (ACE_OutputCDR &os,
                                                const ACE_CDR::Char* x);
 extern ACE_Export ACE_CDR::Boolean operator<< (ACE_OutputCDR &os,
                                                const ACE_CDR::WChar* x);
+extern ACE_Export ACE_CDR::Boolean operator<< (ACE_OutputCDR &os,
+                                               ACE_OutputCDR::from_std_string x);
+extern ACE_Export ACE_CDR::Boolean operator<< (ACE_OutputCDR &os,
+                                               const std::string& x);
+#if !defined(ACE_LACKS_STD_WSTRING)
+extern ACE_Export ACE_CDR::Boolean operator<< (ACE_OutputCDR &os,
+                                               ACE_OutputCDR::from_std_wstring x);
+extern ACE_Export ACE_CDR::Boolean operator<< (ACE_OutputCDR &os,
+                                               const std::wstring& x);
+#endif
 
 // Not used by CORBA or TAO
 extern ACE_Export ACE_CDR::Boolean operator>> (ACE_InputCDR &is,
@@ -1389,6 +1457,16 @@ extern ACE_Export ACE_CDR::Boolean operator>> (ACE_InputCDR &is,
                                                ACE_CDR::Char*& x);
 extern ACE_Export ACE_CDR::Boolean operator>> (ACE_InputCDR &is,
                                                ACE_CDR::WChar*& x);
+extern ACE_Export ACE_CDR::Boolean operator<< (ACE_InputCDR &os,
+                                               ACE_InputCDR::to_std_string x);
+extern ACE_Export ACE_CDR::Boolean operator>> (ACE_InputCDR &is,
+                                               std::string& x);
+#if !defined(ACE_LACKS_STD_WSTRING)
+extern ACE_Export ACE_CDR::Boolean operator<< (ACE_InputCDR &os,
+                                               ACE_InputCDR::to_std_wstring x);
+extern ACE_Export ACE_CDR::Boolean operator>> (ACE_InputCDR &is,
+                                               std::wstring& x);
+#endif
 
 ACE_END_VERSIONED_NAMESPACE_DECL
 

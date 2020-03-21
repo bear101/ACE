@@ -33,7 +33,6 @@ class FilterClient
 {
 
  public:
-  // = Initialization and Termination
   /// Constructor
   FilterClient (void);
 
@@ -136,7 +135,6 @@ class Filter_StructuredPushConsumer
   //
 
  public:
-  // = Initialization and Termination code
   /// Constructor.
   Filter_StructuredPushConsumer (FilterClient* filter, const char *my_name);
 
@@ -169,16 +167,13 @@ protected:
   // = NotifyPublish method
     virtual void offer_change (
         const CosNotification::EventTypeSeq & added,
-        const CosNotification::EventTypeSeq & removed
-      );
+        const CosNotification::EventTypeSeq & removed);
 
   // = StructuredPushSupplier methods
   virtual void push_structured_event (
-        const CosNotification::StructuredEvent & notification
-      );
+        const CosNotification::StructuredEvent & notification);
 
-  virtual void disconnect_structured_push_consumer (
-        );
+  virtual void disconnect_structured_push_consumer ();
 };
 
 /*****************************************************************/
@@ -193,7 +188,6 @@ class Filter_StructuredPushSupplier
   //   Supplier for the filter example.
   //
  public:
-  // = Initialization and Termination code
   /// Constructor.
   Filter_StructuredPushSupplier (const char* my_name);
 
@@ -225,12 +219,10 @@ protected:
   // = NotifySubscribe
   virtual void subscription_change (
         const CosNotification::EventTypeSeq & added,
-        const CosNotification::EventTypeSeq & removed
-      );
+        const CosNotification::EventTypeSeq & removed);
 
   // = StructuredPushSupplier method
-    virtual void disconnect_structured_push_supplier (
-      );
+  virtual void disconnect_structured_push_supplier ();
 };
 
 #endif /* NOTIFY_FILTER_CLIENT_H */

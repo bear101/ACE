@@ -64,7 +64,7 @@ trademarks or registered trademarks of Sun Microsystems, Inc.
  */
 
 /*
- * idl.ll - Lexical scanner for IDL 3.1
+ * idl.ll - Lexical scanner for IDL
  */
 
 #include "global_extern.h"
@@ -87,6 +87,7 @@ trademarks or registered trademarks of Sun Microsystems, Inc.
 #include "fe_home_header.h"
 #include "fe_private.h"
 #include "fe_extern.h"
+#include "ast_annotation_appl.h"
 #include "idl.tab.hpp"
 
 static char *               idl_wstring_escape_reader (char *);
@@ -204,6 +205,9 @@ oneway          return IDL_ONEWAY;
                   return IDL_SCOPE_DELIMITOR;
                 }
 
+@annotation[^A-Za-z0-9_] return IDL_ANNOTATION_DECL; // Allow annotation names that start with "annotation"
+@ return IDL_ANNOTATION_SYMBOL;
+
 [a-ij-rs-zA-IJ-RS-Z_][a-ij-rs-zA-IJ-RS-Z0-9_]* {
   // Make sure that this identifier is not a C++ keyword. If it is,
   // prepend it with a _cxx_. Lookup in the perfect hash table for C++
@@ -281,7 +285,7 @@ oneway          return IDL_ONEWAY;
                   char * const tmp = ace_yytext;
                   for (size_t i = ACE_OS::strlen (tmp); i-- != 0; )
                     {
-                      if (isspace(tmp[i]))
+                      if (isspace (tmp[i]))
                         {
                           tmp[i] = '\0';
                         }
@@ -301,7 +305,7 @@ oneway          return IDL_ONEWAY;
                   char * const tmp = ACE_OS::strdup (ace_yytext);
                   for (size_t i = ACE_OS::strlen (tmp); i-- != 0; )
                     {
-                      if (isspace(tmp[i]))
+                      if (isspace (tmp[i]))
                         {
                           tmp[i] = '\0';
                         }
@@ -311,7 +315,8 @@ oneway          return IDL_ONEWAY;
                         }
                     }
                   tmp[ACE_OS::strlen (tmp) - 1] = '\0';
-                  tao_yylval.wsval = idl_wstring_escape_reader (tmp + 2);
+                  tao_yylval.wsval = ACE_OS::strdup (idl_wstring_escape_reader (tmp + 2));
+                  ACE_OS::free (tmp);
                   return IDL_WSTRING_LITERAL;
                 }
 "'"."'"         {

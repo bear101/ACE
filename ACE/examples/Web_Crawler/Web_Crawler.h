@@ -4,7 +4,7 @@
 /**
  *  @file    Web_Crawler.h
  *
- *  @author Douglas C. Schmidt <schmidt@cs.wustl.edu>
+ *  @author Douglas C. Schmidt <d.schmidt@vanderbilt.edu>
  */
 //=============================================================================
 
@@ -34,7 +34,6 @@ class URL_Visitor_Factory;
 class Web_Crawler
 {
 public:
-  // = Initialization and termination methods.
   /// Constructor.
   Web_Crawler (void);
 

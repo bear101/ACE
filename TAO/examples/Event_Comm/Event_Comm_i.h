@@ -7,7 +7,7 @@
  *  Class interface for the implementation of the distributed
  *  event notification mechanism.
  *
- *  @author Douglas C. Schmidt (schmidt@cs.wustl.edu) and Pradeep Gore <pradeep@cs.wustl.edu>
+ *  @author Douglas C. Schmidt (d.schmidt@vanderbilt.edu) and Pradeep Gore <pradeep@cs.wustl.edu>
  */
 //=============================================================================
 
@@ -50,7 +50,6 @@ public:
 class Consumer_i : public POA_Event_Comm::Consumer
 {
 public:
-  // = Initialization and termination methods.
   /// Constructor.
   Consumer_i (void);
 
