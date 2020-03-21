@@ -56,6 +56,7 @@ endif
 
 ifeq ($(ANDROID_ABI),armeabi-v7a)
   CROSS_COMPILE := arm-linux-androideabi-
+  CROSS_COMPILE_TARGET := --target=armv7a-linux-androideabi21
   FLAGS_C_CC += -march=armv7-a -mfloat-abi=softfp
   ifeq ($(android_neon),1)
     FLAGS_C_CC += -mfpu=neon
@@ -67,16 +68,19 @@ endif
 
 ifeq ($(ANDROID_ABI),arm64-v8a)
   CROSS_COMPILE := aarch64-linux-android-
+  CROSS_COMPILE_TARGET := --target=aarch64-linux-android21
   FLAGS_C_CC += -march=armv8-a
   LDFLAGS    += -march=armv8-a
 endif
 
 ifeq ($(ANDROID_ABI),x86)
   CROSS_COMPILE := i686-linux-android-
+  CROSS_COMPILE_TARGET := --target=i686-linux-android21
 endif
 
 ifeq ($(ANDROID_ABI),x86_64)
   CROSS_COMPILE := x86_64-linux-android-
+  CROSS_COMPILE_TARGET := --target=x86_64-linux-android21
 endif
 
 ifndef CROSS_COMPILE

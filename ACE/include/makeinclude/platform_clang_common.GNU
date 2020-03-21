@@ -6,8 +6,8 @@ CCFLAGS += -fdelayed-template-parsing
 ifneq ($(CROSS_COMPILE),)
   CROSS-COMPILE = 1
   # Build using the cross-tools
-  CC  = ${CROSS_COMPILE}clang${CROSS_COMPILE_SUFFIX}
-  CXX = ${CROSS_COMPILE}clang++${CROSS_COMPILE_SUFFIX}
+  CC  = clang $(CROSS_COMPILE_TARGET)
+  CXX = clang++ $(CROSS_COMPILE_TARGET)
   AR  = ${CROSS_COMPILE}ar${CROSS_COMPILE_SUFFIX}
   # Cross-linker requires this for linked in shared libs that depend
   # themselves on other shared libs (not directly linked in)
